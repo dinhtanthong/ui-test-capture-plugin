@@ -1,6 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
   
-	<base href="${it.getRootUrl()}plugin/uitestcapture/" />
+	<base href="${it.getRootUrl()}plugin/ui-test-capture/" />
 	<script>var url='${it.getRootUrl()}${it.getProjectUrl()}';</script>
 	<script>var relativepath='${it.getBuildArtifacts()}'+resources;</script>
 	<script>var job='${it.getName()}';</script>

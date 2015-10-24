@@ -100,7 +100,7 @@ public class SqliteHelper {
     	if(c == null){
         	Class.forName("org.sqlite.JDBC");
         	try{
-    			c = DriverManager.getConnection("jdbc:sqlite:"+Jenkins.getInstance().getRootDir()+"/plugins/uitestcapture/uitest.sqlite");
+    			c = DriverManager.getConnection("jdbc:sqlite:"+Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest.sqlite");
     			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
         	}catch(Exception e1){
     			c = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitestdev.sqlite");
@@ -115,7 +115,7 @@ public class SqliteHelper {
     	if(cNewDb == null){
         	Class.forName("org.sqlite.JDBC");
         	try{
-        		cNewDb = DriverManager.getConnection("jdbc:sqlite:"+Jenkins.getInstance().getRootDir()+"/plugins/uitestcapture/uitest-model.sqlite");
+        		cNewDb = DriverManager.getConnection("jdbc:sqlite:"+Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest-model.sqlite");
         		cNewDb.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
         	}catch(Exception e1){
         		cNewDb = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitest-model.sqlite");
@@ -127,7 +127,7 @@ public class SqliteHelper {
     
     
     public static void verifyDatabaseVersionMigration() throws Exception{
-    	File fprodModelDb = new File(Jenkins.getInstance().getRootDir()+"/plugins/uitestcapture/uitest-model.sqlite");
+    	File fprodModelDb = new File(Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest-model.sqlite");
     	
     	//se o arquivo modelo, realizar procedimento de exportação
     	if(fprodModelDb.exists() && !fprodModelDb.isDirectory()){ 
@@ -238,9 +238,9 @@ public class SqliteHelper {
 
 	                SimpleDateFormat formatas = new SimpleDateFormat("yyyyMMdd-HHmmSS");
 	                String data = formatas.format(new Date());
-	    			File fprodCurrentDbBkp = new File(Jenkins.getInstance().getRootDir()+"/plugins/uitestcapture/uitest-bkp-"+data+".sqlite");
+	    			File fprodCurrentDbBkp = new File(Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest-bkp-"+data+".sqlite");
 
-	    			File fprodCurrentDb = new File(Jenkins.getInstance().getRootDir()+"/plugins/uitestcapture/uitest.sqlite");
+	    			File fprodCurrentDb = new File(Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest.sqlite");
 	    			FileUtils.copyFile(fprodCurrentDb, fprodCurrentDbBkp);
 	    			fprodCurrentDb.delete();
 	    		}catch(Exception e){
@@ -250,7 +250,7 @@ public class SqliteHelper {
 	    		System.out.println("ATR-Rename new db...");
 	    		try{
 		    		try {
-		    			File fprodCurrentDb = new File(Jenkins.getInstance().getRootDir()+"/plugins/uitestcapture/uitest.sqlite");
+		    			File fprodCurrentDb = new File(Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest.sqlite");
 		    			FileUtils.copyFile(fprodModelDb, fprodCurrentDb);
 		    		} catch (IOException e) {
 		    		    e.printStackTrace();
@@ -272,7 +272,7 @@ public class SqliteHelper {
 
     		//Reinstanciando a base
         	try{
-    			c = DriverManager.getConnection("jdbc:sqlite:"+Jenkins.getInstance().getRootDir()+"/plugins/uitestcapture/uitest.sqlite");
+    			c = DriverManager.getConnection("jdbc:sqlite:"+Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest.sqlite");
     			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
         	}catch(Exception e1){
     			c = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitestdev.sqlite");

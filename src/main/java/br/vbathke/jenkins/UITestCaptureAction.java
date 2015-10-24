@@ -33,7 +33,7 @@ public class UITestCaptureAction extends UITestCaptureBase implements Action {
     
     @Override
     public String getIconFileName() {
-        return "/plugin/uitestcapture/images/uitestcapture.png";
+        return "/plugin/ui-test-capture/images/uitestcapture.png";
     }
 
     @Override
@@ -43,7 +43,7 @@ public class UITestCaptureAction extends UITestCaptureBase implements Action {
 
     @Override
     public String getUrlName() {
-        return "uitestcapture";
+        return "ui-test-capture";
     }
     
     public AbstractBuild<?,?> getBuild() {

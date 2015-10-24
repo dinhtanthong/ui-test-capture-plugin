@@ -65,7 +65,7 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
 
     @Override
     public String getIconFileName() {
-        return "/plugin/uitestcapture/images/uitestcapture.png";
+        return "/plugin/ui-test-capture/images/uitestcapture.png";
     }
 
     @Override
@@ -75,7 +75,7 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
 
     @Override
     public String getUrlName() {
-        return "uitestcapture";
+        return "ui-test-capture";
     }
     
     public AbstractProject<?,?> getProject(){
@@ -102,6 +102,8 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
 		try {
 			String testStreamLocal = getTestStream();
 	    	String tmpHash = md5Hash(testStreamLocal);
+	    	String[] testStreamSplit;
+	    	String outResponse = "";
 	    	
 			//Se arquivo possuí mudanças
 			if(testStreamPossuiDiferenca()){
@@ -109,7 +111,7 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
 		    	Execution exec = new Execution(request.getParameter("exec"), job.getId());
 
 		    	//unstack from file and record on db
-				String[] testStreamSplit = testStreamLocal.split("\\n");
+				testStreamSplit = testStreamLocal.split("\\n");
 				for(int i=0; i<testStreamSplit.length; i++){
 					if(!testStreamSplit[i].equals("")){
 						JsonParseSingleQuote jsonLinha = new JsonParseSingleQuote(testStreamSplit[i]);
@@ -137,9 +139,12 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
 						Files.write(Paths.get(fileString), testStreamLocal.getBytes(StandardCharsets.UTF_8));
 					}catch(Exception e){}
 				}
+				outResponse = "hash: "+hash+" lines discovered: "+testStreamSplit.length;
+			}else{
+				outResponse = "hash: "+hash+" lines: 0";
 			}
 			ServletOutputStream out = response.getOutputStream();
-			out.write(hash.getBytes("UTF-8"));
+			out.write(outResponse.getBytes("UTF-8"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

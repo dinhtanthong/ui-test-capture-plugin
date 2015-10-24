@@ -139,7 +139,7 @@
 	function ajaxSubmit(obj){
 		var stringAnterior = document.getElementById(obj.name).value;
 		var jsonObj = {id: obj.name, status: obj.value}	
-		jQuery.post(url+"uitestcapture/ajaxProcess", jsonObj, function( data ) {
+		jQuery.post(url+"ui-test-capture/ajaxProcess", jsonObj, function( data ) {
 			atualizarQuadroFalhas();
 		});
 	}
@@ -147,24 +147,24 @@
 	function ajaxReadResult(exec, stream){
 		var streamsize = tests.length;
 		var jsonObj = {job:job, exec:exec, stream:stream, streamsize:streamsize};
-		var response = jQuery.ajax({type:"POST", url:url+"uitestcapture/ajaxQueryHistorico", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
+		var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxQueryHistorico", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
 		return jQuery.parseJSON(response);
 	}
 
 	function ajaxReadResultSize(exec){
 		var jsonObj = {job:job, exec:exec};
-		var response = jQuery.ajax({type:"POST", url:url+"uitestcapture/consultarHistoricoExecSize", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
+		var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/consultarHistoricoExecSize", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
 		return jQuery.parseJSON(response);
 	}
 	
 	function ajaxVerifyResults(){
 		var jsonObj = {job:job, exec:descVersaoAtual};
-		var response = jQuery.ajax({type:"GET", url:url+"uitestcapture/ajaxVerifyResults", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
+		var response = jQuery.ajax({type:"GET", url:url+"ui-test-capture/ajaxVerifyResults", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
 	}
 	
 	function ajaxUpdateQuarantineDescription(test){
 		var jsonObj = {job:job, test:test, statusDescription: jQuery("[id='description "+test+"']").val()}	
-		var response = jQuery.ajax({type:"POST", url:url+"uitestcapture/ajaxUpdateQuarantineDescription", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
+		var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateQuarantineDescription", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
 	}
 	
 	jQuery.fn.sortElements = (function(){
@@ -253,7 +253,7 @@ function ajaxRun(url){
 function ajaxUpdateQuarantine(obj){
 	var stringAnterior = document.getElementById(obj.name).value;
 	var jsonObj = {job:job, test: obj.name, status: obj.value}	
-	var response = jQuery.ajax({type:"POST", url:url+"uitestcapture/ajaxUpdateQuarantine", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
+	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateQuarantine", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
 
 	if(obj.value == "app_fail"){
 		jQuery("[id='container "+obj.name+"']").detach().appendTo("#dlFailApp");				
@@ -270,13 +270,13 @@ function ajaxUpdateQuarantine(obj){
 
 function ajaxUpdateQuarantineDescription(test){
 	var jsonObj = {job:job, test:test, statusDescription: jQuery("[id='description "+test+"']").val()}	
-	var response = jQuery.ajax({type:"POST", url:url+"uitestcapture/ajaxUpdateQuarantineDescription", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
+	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateQuarantineDescription", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
 	document.getElementById("description-status-"+test.replace(/\./g,"")).innerHTML = "Saved";
 }
 
 function atualizarTotais(){
 	var jsonObj = {job:job, exec:descVersaoAtual};
-	var response = jQuery.ajax({type:"POST", url:url+"uitestcapture/consultarQuadro", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
+	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/consultarQuadro", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
 	var retorno = jQuery.parseJSON(response);
 	var success = 0;
 	var fail = 0;
