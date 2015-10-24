@@ -10,3 +10,4 @@ nbactions.xml
 /package.launch
 /run.launch
 /release.properties
+/release.launch
