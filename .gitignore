@@ -1,0 +1,12 @@
+bin/
+target/
+.idea/
+*.iml
+.project
+.settings
+.classpath
+work/
+nbactions.xml
+/package.launch
+/run.launch
+/release.properties
