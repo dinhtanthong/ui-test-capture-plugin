@@ -3,11 +3,11 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.608</version>
+		<version>1.599</version>
 	</parent>
 
 	<artifactId>ui-test-capture</artifactId>
-	<version>1.0.42</version>
+	<version>1.0.42-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	
 	<name>UI Test Capture</name>

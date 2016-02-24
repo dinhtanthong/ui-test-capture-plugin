@@ -130,7 +130,7 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
 				    	test.save();
 
 				    	//record the result
-				    	Result result = new Result(exec.getId(), test.getTest());
+				    	Result result = new Result(job.getId(), exec.getId(), test.getTest());
 				    	result.setStatus(jsonLinha.get("status"));
 				    	result.setStacktrace(FileUtils.readFileToString(new File(project.getRootDir().getCanonicalPath()+"/workspace/target/surefire-reports/"+jsonLinha.get("classe").trim()+".txt"), "UTF-8"));
 				    	result.save();						

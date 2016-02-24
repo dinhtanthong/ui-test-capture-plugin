@@ -10,7 +10,7 @@ import br.vbathke.helper.SqliteHelper;
 
 public class Result {
 
-	private int id = 0;
+	private int idJob = 0;
 	private int idExec = 0;
 	private String test = "";
 	private String status = "";
@@ -21,18 +21,18 @@ public class Result {
 	public Result(){		
 	}
 		
-	public Result(int pIdExec, String pTest){
+	public Result(int pIdJob, int pIdExec, String pTest){
 		try {
 			this.setIdExec(pIdExec);
 			this.setTest(pTest);
 	    	SqliteHelper conn = new SqliteHelper();
 	    	JSONArray rs;
-			rs = conn.query( "SELECT * FROM tb_result where id_exec='"+idExec+"' and test='"+test+"';" );
+			rs = conn.query( "SELECT * FROM tb_result where id_job='"+idJob+"' and id_exec='"+idExec+"' and test='"+test+"';" );
 			if(rs.size()>0){				
 				JSONObject item = rs.getJSONObject(0);
 			    if(item.getString("test").equals(test)){
 			    	setIdExec(idExec);
-				    //setId(rs.getJSONObject(0).getInt("id"));
+				    setIdJob(rs.getJSONObject(0).getInt("id_job"));
 				    setTest(rs.getJSONObject(0).getString("test"));
 				    setStatus(rs.getJSONObject(0).getString("status"));
 				    setDescription(rs.getJSONObject(0).getString("description"));
@@ -59,7 +59,7 @@ public class Result {
 			    }
 			}
 			if(testeAtual.equals("")){
-				conn.update("INSERT INTO tb_result(id_exec, test, status, stacktrace, date) VALUES('"+getIdExec()+"','"+getTest()+"','"+this.getStatus()+"','"+this.getStacktrace().replace("'", "''")+"','"+(new SimpleDateFormat("yyyyMMddHHmmss")).format(new java.util.Date())+"');");
+				conn.update("INSERT INTO tb_result(id_job, id_exec, test, status, stacktrace, date) VALUES('"+getIdJob()+"','"+getIdExec()+"','"+getTest()+"','"+this.getStatus()+"','"+this.getStacktrace().replace("'", "''")+"','"+(new SimpleDateFormat("yyyyMMddHHmmss")).format(new java.util.Date())+"');");
 			}else{
 			    stmt = SqliteHelper.getConn().createStatement();	    	
 			    stmt.executeUpdate("update tb_result set "
@@ -73,11 +73,11 @@ public class Result {
 		}
 	}
 	
-	public int getId() {
-		return id;
+	public int getIdJob() {
+		return idJob;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setIdJob(int idJob) {
+		this.idJob = idJob;
 	}
 
 	public String getTest() {

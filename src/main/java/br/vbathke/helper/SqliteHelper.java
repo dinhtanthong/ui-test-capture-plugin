@@ -203,17 +203,19 @@ public class SqliteHelper {
 	
 	    			ResultSet rs4 = getConn().createStatement().executeQuery( "SELECT * FROM tb_result");
 	    			while (rs4.next()) {
+	    			     int id_job = 0;
 	    			     int id_exec = 0;
 	    			     String test = "";
 	    			     String status = "";
 	    			     String description = "";
 	    			     String stacktrace = "";
+	    			     try{id_job = rs4.getInt("id_job");}catch(Exception e){}
 	    			     try{id_exec = rs4.getInt("id_exec");}catch(Exception e){}
 	    			     try{test = rs4.getString("test");}catch(Exception e){}
 	    			     try{status = rs4.getString("status");}catch(Exception e){}
 	    			     try{description = rs4.getString("description");}catch(Exception e){}
 	    			     try{stacktrace = rs4.getString("stacktrace");}catch(Exception e){}
-	    			     data_tb_result.append("insert into tb_result(id_exec, test, status, description, stacktrace) values('"+id_exec+"','"+test+"','"+status+"','"+description+"','"+stacktrace+"');\n");
+	    			     data_tb_result.append("insert into tb_result(id_job,id_exec, test, status, description, stacktrace) values('"+id_job+"','"+id_exec+"','"+test+"','"+status+"','"+description+"','"+stacktrace+"');\n");
 	    			}
 	    			rs4.close();
 	    			getConn().createStatement().close();

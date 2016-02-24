@@ -73,7 +73,8 @@ public class UITestCaptureBase {
     }
     
     public void doAjaxUpdateQuarantineResult(StaplerRequest request, StaplerResponse response) {
-    	Result result = new Result(Integer.parseInt(request.getParameter("exec")), request.getParameter("test"));
+    	Job job = new Job(request.getParameter("job"));    	
+    	Result result = new Result(job.getId(), Integer.parseInt(request.getParameter("exec")), request.getParameter("test"));
     	result.setDescription(request.getParameter("statusResult"));
     	result.save();
       	try {
