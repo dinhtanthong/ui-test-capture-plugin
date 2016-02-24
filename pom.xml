@@ -7,7 +7,7 @@
 	</parent>
 
 	<artifactId>ui-test-capture</artifactId>
-	<version>1.0.42-SNAPSHOT</version>
+	<version>1.0.42</version>
 	<packaging>hpi</packaging>
 	
 	<name>UI Test Capture</name>
