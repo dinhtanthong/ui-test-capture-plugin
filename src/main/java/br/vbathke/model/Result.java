@@ -23,11 +23,12 @@ public class Result {
 		
 	public Result(int pIdJob, int pIdExec, String pTest){
 		try {
+			this.setIdJob(pIdJob);
 			this.setIdExec(pIdExec);
 			this.setTest(pTest);
 	    	SqliteHelper conn = new SqliteHelper();
 	    	JSONArray rs;
-			rs = conn.query( "SELECT * FROM tb_result where id_job='"+idJob+"' and id_exec='"+idExec+"' and test='"+test+"';" );
+			rs = conn.query( "SELECT * FROM tb_result where id_job='"+pIdJob+"' and id_exec='"+idExec+"' and test='"+test+"';" );
 			if(rs.size()>0){				
 				JSONObject item = rs.getJSONObject(0);
 			    if(item.getString("test").equals(test)){
