@@ -89,7 +89,22 @@ public class UITestCaptureBase {
       	try {
 			response.getOutputStream().println("{\"message\":\"sucesso\"}");
       	} catch (IOException e) {}    	
+    }
+    
+    public void doAjaxUpdateExecDescription(StaplerRequest request, StaplerResponse response) throws Exception{
+    	Job job = new Job(request.getParameter("job"));
+    	int idJob = 1;
+    	if(job.getId() > 0){
+    		idJob = job.getId();
+    	}
+    	Execution exec = new Execution(request.getParameter("exec"), idJob);
+    	exec.setDescription(request.getParameter("description"));
+    	exec.save();
+      	try {
+			response.getOutputStream().println("{\"message\":\"sucesso\"}");
+      	} catch (IOException e) {}    	
     }    
+    
     
     public void doConsultarQuadro(StaplerRequest request, StaplerResponse response) throws Exception{
     	Job job = new Job(request.getParameter("job"));

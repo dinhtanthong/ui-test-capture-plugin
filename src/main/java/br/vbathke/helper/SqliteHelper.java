@@ -190,13 +190,13 @@ public class SqliteHelper {
 	    			while (rs3.next()) {
 	    			     int id = 0;
 	    			     int id_job = 0;
-	    			     String version = "";
+	    			     String description = "";
 	    			     String date = "";
 	    			     try{id = rs3.getInt("id");}catch(Exception e){}
 	    			     try{id_job = rs3.getInt("id_job");}catch(Exception e){}
-	    			     try{version = rs3.getString("version");}catch(Exception e){}
+	    			     try{description = rs3.getString("description");}catch(Exception e){}
 	    			     try{date = rs3.getString("date");}catch(Exception e){}
-	    			     data_tb_exec.append("insert into tb_exec(id, id_job, version, date) values('"+id+"','"+id_job+"','"+version+"','"+date+"');\n");
+	    			     data_tb_exec.append("insert into tb_exec(id, id_job, description, date) values('"+id+"','"+id_job+"','"+description+"','"+date+"');\n");
 	    			}
 	    			rs3.close();
 	    			getConn().createStatement().close();

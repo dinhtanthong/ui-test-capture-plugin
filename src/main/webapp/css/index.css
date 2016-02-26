@@ -6,13 +6,13 @@
 .accordion dd {border-top: 0;font-size: 9px;}
 .accordion dd:last-of-type {border-top: 1px solid white;position: relative;top: -1px;}
 
-.titulo{float:left;margin-left:15px;}
-.headerUiTest{height:50px;}
+.titulo{margin-left:15px;}
+.headerUiTest{}
 .loadingUiTest{width:20px;height:auto;margin:-5px 5px 0px -20px;display:none;}
 
 .quadroFalhas{display:none;}
 .analise{width:120px;}
-#resultado{float:right;margin-top:14px;margin-right:14px;display:none;position:fixed;top:70px;right:30px;}
+#resultado{float:right;margin-top:24px;margin-right:14px;display:none;}
 #resultado table td{font-size:12px;}
 .resultado div{display:inline-block;}
 .passou{color:green;}

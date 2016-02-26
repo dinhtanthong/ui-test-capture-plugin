@@ -19,7 +19,6 @@ public class Execution {
 	private int idJob = 0;
 	private Job job;
 	private String description = "";
-	private String version = "";
 	private String date = "";
 	
 	public Execution(){		
@@ -40,7 +39,7 @@ public class Execution {
 			JSONObject item = rs.getJSONObject(0);
 	    	setId(item.getInt("id"));
 	    	setIdJob(item.getInt("id_job"));
-	    	setVersion(item.getString("version"));
+	    	setDescription(item.getString("description"));
 	    	setDate(item.getString("date"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,8 +60,12 @@ public class Execution {
 			    }
 			}
 			if(exec == 0){
-	            conn.update("INSERT INTO tb_exec(id, id_job, date) "
-	            		+ "VALUES('"+getId()+"','"+job.getId()+"','"+(new SimpleDateFormat("yyyyMMddHHmmss")).format(new java.util.Date())+"');");
+				String sql = "INSERT INTO tb_exec(id, id_job, date, description) "
+	            		+ "VALUES('"+getId()+"','"+job.getId()+"','"+(new SimpleDateFormat("yyyyMMddHHmmss")).format(new java.util.Date())+"','"+getDescription()+"');";
+	            conn.update(sql);
+			}else{
+				String sql = "update tb_exec set description='"+getDescription()+"' where id='"+exec+"'";
+	            conn.update(sql);				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,6 +76,7 @@ public class Execution {
     	SqliteHelper conn = new SqliteHelper();
     	JSONArray rs = conn.query( "select tr.id_exec,"
 				+ "tr.test as metodo, "
+				+ "te.description as execDescription, "
 				+ "tr.status as status, "
 				+ "tr.description as descricao, "
 				+ "tt.status_description as statusDescription, "
@@ -203,12 +207,12 @@ public class Execution {
 		this.idJob = idJob;
 	}
 
-	public String getVersion() {
-		return version;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getDate() {

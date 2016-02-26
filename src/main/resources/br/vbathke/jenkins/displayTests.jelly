@@ -4,16 +4,38 @@
 	<script>var url='${it.getRootUrl()}${it.getProjectUrl()}';</script>
 	<script>var relativepath='${it.getBuildArtifacts()}'+resources;</script>
 	<script>var job='${it.getName()}';</script>
+	<script>var nextBuild='${it.getNextBuild()}';</script>
 	<script>var descVersaoAtual='${it.getVersaoAtual()}';</script>
 	
     <link rel="stylesheet" href="css/index.css" />
     <link rel="stylesheet" href="css/colorbox.css" />
 
 	<div class="uiTest">
+
+
+			<div id="resultado">
+				<div style="float:left;">		
+					<h3>
+						<img src="images/loading.gif" class="loadingUiTest" /> 
+						Test suite results
+					</h3>
+					<table>
+						<tr><td align="right">Test Passed: </td><td><span class="resultado passou">0</span></td></tr>
+						<tr><td align="right">Test Fail: </td><td><span class="resultado falhou">0</span></td></tr>
+						<tr><td align="right">Working Tests:</td><td> <span class="resultado working">0</span></td></tr>
+						<tr><td align="right">Flaky: </td><td><span class="resultado flaky">0</span></td></tr>
+						<tr><td align="right">Total: </td><td><span class="resultado total">0</span></td></tr>
+						<tr><td colspan="2" checked="checked"></td></tr>
+					</table>
+				</div>
+			</div>
+
 	    <div class="headerUiTest">
-			
-			<h3 class="titulo">
-				UI Test Capture - ${it.getName()} #<span id="buildInfoId">${it.getVersaoAtual()}</span>
+			<h2 class="titulo" style="display:block;">
+				UI Test Capture
+			</h2>
+			<h3 class="titulo" style="display:block;">
+				${it.getName()} #<span id="buildInfoId">${it.getVersaoAtual()}</span>
 				<a href="javascript:ajaxRun('${it.getRootUrl()}${it.getProjectUrl()}build?delay=0sec');" class="reexec">
 					<img src="images/reexec.png" style="margin-top:-4px;margin:0 10px 0 10px;"/>
 				</a>
@@ -21,39 +43,27 @@
 					<input type="checkbox" id="ordenar" checked="checked" /> Order
 				</span>
 			</h3>
+			<div style="margin-left:15px;">
+				Go to:
+				 <a href="${it.getRootUrl()}job/${it.getName()}/${it.getPreviousBuild()}/ui-test-capture/">previous build </a> 
+				 <a class="nextBuild" href="${it.getRootUrl()}job/${it.getName()}/${it.getNextBuild()}/ui-test-capture/"> next build</a>
+				
+			</div>
+			<br />
+			<br />
 			
-			<div id="resultado">
-				<div style="float:left;">		
-				<h4>
-					<img src="images/loading.gif" class="loadingUiTest" /> 
-					Test suite results
-				</h4>
-				<table>
-					<tr>
-						<td align="right">Test Passed: </td><td><span class="resultado passou">0</span></td>
-					</tr>
-					<tr>
-						<td align="right">Test Fail: </td><td><span class="resultado falhou">0</span></td>
-					</tr>
-					<tr>
-						<td align="right">Working Tests:</td><td> <span class="resultado working">0</span></td>
-					</tr>
-					<tr>
-						<td align="right">Flaky: </td><td><span class="resultado flaky">0</span></td>
-					</tr>
-					<tr>
-						<td align="right">Total: </td><td><span class="resultado total">0</span></td>
-					</tr>
-					<tr>
-						<td colspan="2" checked="checked">
-						</td>
-					</tr>
-				</table>
+			<div style="width:50%;margin-left:10px;">
+				<textarea  class="todo" id="execdescription"></textarea>
+				<div class="description-commands">
+					<span class="description-status" id="execdescription-status"></span>
+					<input type="button" value="Save" onClick="javascript:ajaxUpdateExecDescription();" />
 				</div>
 			</div>
 		</div>
+
+
 		<div class="headerUiTest">
-			<h3 class="titulo">
+			<h3 class="titulo" style="display:block;">
 				Test suite
 			</h3>
 		</div>

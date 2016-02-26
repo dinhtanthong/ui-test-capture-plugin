@@ -85,6 +85,14 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
     public AbstractProject<?,?> getProject(){
     	return project;
     }
+
+    public String getNextBuild(){
+    	return project.getLastBuild().getNextBuild().getId();
+    }    
+
+    public String getPreviousBuild(){
+    	return project.getLastBuild().getPreviousBuild().getId();
+    }        
     
     public String getName(){
     	return project.getName();
@@ -132,7 +140,11 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
 				    	//record the result
 				    	Result result = new Result(job.getId(), exec.getId(), test.getTest());
 				    	result.setStatus(jsonLinha.get("status"));
-				    	result.setStacktrace(FileUtils.readFileToString(new File(project.getRootDir().getCanonicalPath()+"/workspace/target/surefire-reports/"+jsonLinha.get("classe").trim()+".txt"), "UTF-8"));
+				    	try{
+					    	result.setStacktrace(FileUtils.readFileToString(new File(project.getRootDir().getCanonicalPath()+"/workspace/target/surefire-reports/"+jsonLinha.get("classe").trim()+".txt"), "UTF-8"));				    		
+				    	}catch(Exception e){
+				    		result.setStacktrace("");
+				    	}
 				    	result.save();						
 
 				    	testStreamLocal = testStreamLocal.replace(testStreamSplit[i]+"\n", "");

@@ -13,6 +13,11 @@
 
 //### VIEW HELPERS
 	function appendResult(obj, rawObj){
+		
+		if($('#execdescription').val() == "" && obj.execDescription != ""){
+			$('#execdescription').val(obj.execDescription);
+		}
+		
 		if(obj.id_exec == descVersaoAtual || versaoAtual == 0){
 			
 			//Index
@@ -245,6 +250,12 @@
 
 //###	CONTROLLER LISTENER
 	jQuery(document).ready(function() {
+		
+		//hide nextBuild
+		if(nextBuild == ''){
+			$(".nextBuild").css("display", "none");
+		}
+		
 		fetchBuffer();
 		atualizarTotais();
 		if(!historico){
@@ -319,6 +330,13 @@ function ajaxUpdateQuarantineBehavior(test){
 		document.getElementById("label "+test+"").innerHTML = test;
 	}
 }
+
+function ajaxUpdateExecDescription(){
+	var jsonObj = {job:job, exec:descVersaoAtual, description: jQuery("[id='execdescription']").val()}
+	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateExecDescription", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
+	document.getElementById("execdescription-status").innerHTML = "Saved";
+}
+
 
 function atualizarTotais(){
 	var jsonObj = {job:job, exec:descVersaoAtual};

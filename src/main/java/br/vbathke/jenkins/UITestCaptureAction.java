@@ -46,6 +46,14 @@ public class UITestCaptureAction extends UITestCaptureBase implements Action {
         return "ui-test-capture";
     }
     
+    public String getNextBuild(){
+    	return build.getNextBuild().getId();
+    }    
+
+    public String getPreviousBuild(){
+    	return build.getPreviousBuild().getId();
+    }            
+    
     public AbstractBuild<?,?> getBuild() {
         return this.build;
     }

@@ -8,10 +8,9 @@
 
 	<artifactId>ui-test-capture</artifactId>
 	<version>1.0.44-SNAPSHOT</version>
-	<packaging>hpi</packaging>
 	
 	<name>UI Test Capture</name>
-	<description>Display screenshots and stacktraces while your UI Test Suit builds.</description>
+	<description>Display screenshots and stacktraces while your UI Test Suite builds.</description>
 	
 	<url>https://wiki.jenkins-ci.org/display/JENKINS/UI+Test+Capture+Plugin</url>
 	<scm>
@@ -52,7 +51,7 @@
         <artifactId>maven-hpi-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
-          <compatibleSinceVersion>1.29</compatibleSinceVersion>
+          <compatibleSinceVersion>1.42</compatibleSinceVersion>
         </configuration>
       </plugin>
     </plugins>
