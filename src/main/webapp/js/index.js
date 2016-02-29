@@ -109,7 +109,7 @@
 				"</dd>" +
 				"</div>"
 			);
-			
+						
 			$('.linkScreenshot').colorbox({retinaImage:true, retinaUrl:true});
 			$('.accordion > div > dt > a').click(function() {
 				$this = $(this);
@@ -121,6 +121,46 @@
 				return false;
 			});
 		}
+	}
+	
+	function appendExecutionHistory(obj){
+		
+		
+		$("#historyResult").html("");
+		var executions = jQuery.parseJSON(ajaxGetExecutions());
+		$("#historyResult").append("<table style=\"width:90%;\">");
+		$("#historyResult").append("<tr>");
+		$("#historyResult").append("<th style=\"min-width:200px;\">Tests</th>");
+		for(var i=executions.length-1; i>=0; i--){
+			$("#historyResult").append("<th style=\"min-width:30px;\">#"+executions[i].id+"</th>");
+		}
+		$("#historyResult").append("</tr>");
+
+		for(var j=0; j<obj.stack.length; j++){
+			$("#historyResult").append("<tr>");
+			$("#historyResult").append("<td>"+obj.stack[j].classe+"</td>");
+			var tmpTestHistory = jQuery.parseJSON(obj.stack[j].historico);
+			for(var i=executions.length-1; i>=0; i--){
+				var flagFill = false;
+				for(var k=tmpTestHistory.length-1; k>=0; k--){
+					if(tmpTestHistory[k].id_exec == executions[i].id){
+						if(tmpTestHistory[k].status=="sucesso"){
+							$("#historyResult").append("<td style=\"text-align:center;\"><img src=\"images/passed.gif\" class=\"imgstatus\" /></td>");
+							flagFill = true;
+						}else{
+							$("#historyResult").append("<td style=\"text-align:center;\"><img src=\"images/failed.png\" class=\"imgstatus\" /></td>");						
+							flagFill = true;
+						}
+					}
+				}
+				if(!flagFill){
+					$("#historyResult").append("<td style=\"text-align:center;\">-</td>");					
+				}
+			}
+			$("#historyResult").append("</tr>");
+		}
+		
+		$("#historyResult").append("</table>");
 	}
 
 	function zerarTotais(){
@@ -227,12 +267,16 @@
 		jQuery.ajaxSetup({cache:false});
 
 		if(historico){
-			parseBuffer(ajaxReadResult(descVersaoAtual, false));  
+			var jsonres = ajaxReadResult(descVersaoAtual, false);
+			appendExecutionHistory(jsonres);
+			parseBuffer(jsonres);  
 		}else{
 			var objLenght = ajaxReadResultSize(descVersaoAtual);
 			ajaxVerifyResults();
 			if(tests.length < objLenght){
-				parseBuffer(ajaxReadResult(descVersaoAtual, true));
+				var jsonres = ajaxReadResult(descVersaoAtual, true);
+				appendExecutionHistory(jsonres);
+				parseBuffer(jsonres);
 			}
 		}
 	}
@@ -335,6 +379,12 @@ function ajaxUpdateExecDescription(){
 	var jsonObj = {job:job, exec:descVersaoAtual, description: jQuery("[id='execdescription']").val()}
 	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateExecDescription", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
 	document.getElementById("execdescription-status").innerHTML = "Saved";
+}
+
+function ajaxGetExecutions(){
+	var jsonObj = {job:job}
+	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/getExecutions", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
+	return response;
 }
 
 

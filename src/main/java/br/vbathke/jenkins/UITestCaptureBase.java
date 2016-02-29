@@ -105,7 +105,6 @@ public class UITestCaptureBase {
       	} catch (IOException e) {}    	
     }    
     
-    
     public void doConsultarQuadro(StaplerRequest request, StaplerResponse response) throws Exception{
     	Job job = new Job(request.getParameter("job"));
     	Execution exec = new Execution(request.getParameter("exec"), job.getId());
@@ -132,5 +131,16 @@ public class UITestCaptureBase {
     		}
 			response.getOutputStream().println(retorno);
       	} catch (IOException e) {}
-    }    
+    }
+    
+    public void doGetExecutions(StaplerRequest request, StaplerResponse response) throws Exception{
+    	Job job = new Job(request.getParameter("job"));
+      	try {
+    		String retorno = job.getExecutions();
+        	if(retorno.equals("")){
+        		retorno="[{}]";
+    		}
+			response.getOutputStream().println(retorno);
+      	} catch (IOException e) {}
+    }
 }

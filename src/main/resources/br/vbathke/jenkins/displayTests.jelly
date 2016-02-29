@@ -9,7 +9,9 @@
 	
     <link rel="stylesheet" href="css/index.css" />
     <link rel="stylesheet" href="css/colorbox.css" />
-
+	<link rel="stylesheet" href="css/jquery.modal.css" />
+	<script src='js/jquery.modal.js'></script>
+		    
 	<div class="uiTest">
 
 
@@ -27,6 +29,9 @@
 						<tr><td align="right">Total: </td><td><span class="resultado total">0</span></td></tr>
 						<tr><td colspan="2" checked="checked"></td></tr>
 					</table>
+					<div style="text-align:center;margin-top:10px;">
+						<a href="#ex1" rel="modal:open">Execution History</a>				
+					</div>
 				</div>
 			</div>
 
@@ -41,14 +46,13 @@
 				</a>
 				<span style="font-size:10px;font-weight:normal;">
 					<input type="checkbox" id="ordenar" checked="checked" /> Order
+					<span style="margin-left:20px;">
+					Go to:
+					 <a href="${it.getRootUrl()}job/${it.getName()}/${it.getPreviousBuild()}/ui-test-capture/">previous build </a> 
+					 <a  style="margin-left:3px;" class="nextBuild" href="${it.getRootUrl()}job/${it.getName()}/${it.getNextBuild()}/ui-test-capture/"> next build</a>
+					</span>
 				</span>
 			</h3>
-			<div style="margin-left:15px;">
-				Go to:
-				 <a href="${it.getRootUrl()}job/${it.getName()}/${it.getPreviousBuild()}/ui-test-capture/">previous build </a> 
-				 <a class="nextBuild" href="${it.getRootUrl()}job/${it.getName()}/${it.getNextBuild()}/ui-test-capture/"> next build</a>
-				
-			</div>
 			<br />
 			<br />
 			
@@ -61,6 +65,11 @@
 			</div>
 		</div>
 
+		<div id="ex1" style="display:none;">
+			<p>
+				<div id="historyResult"></div>
+			</p>
+		</div>
 
 		<div class="headerUiTest">
 			<h3 class="titulo" style="display:block;">
