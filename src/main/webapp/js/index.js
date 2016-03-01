@@ -128,39 +128,45 @@
 		
 		$("#historyResult").html("");
 		var executions = jQuery.parseJSON(ajaxGetExecutions());
-		$("#historyResult").append("<table style=\"width:90%;\">");
-		$("#historyResult").append("<tr>");
-		$("#historyResult").append("<th style=\"min-width:200px;\">Tests</th>");
-		for(var i=executions.length-1; i>=0; i--){
-			$("#historyResult").append("<th style=\"min-width:30px;\">#"+executions[i].id+"</th>");
-		}
-		$("#historyResult").append("</tr>");
+		$("#historyResult").append("<h3>Last 10 runs</h3>");
 
+		var concatExecutions='';
+		for(var i=executions.length-1; i>=0; i--){
+			concatExecutions+="<th style=\"min-width:30px;\">#"+executions[i].id+"</th>";
+		}
+		var headerTable="<table id='historyResultTable' style=\"width:90%;\"><tr class='no-sort'><th style=\"min-width:200px;\" class='no-sort'>Tests</th>"+concatExecutions+"<th style=\"text-align:center;min-width:50px;\" class='sort-default' data-sort-order='asc'>Fails</th></tr>";
+
+		var bodyTable ='';
 		for(var j=0; j<obj.stack.length; j++){
-			$("#historyResult").append("<tr>");
-			$("#historyResult").append("<td>"+obj.stack[j].classe+"</td>");
+			var concatLine = '';
+			var fails = 0;
+			concatLine+="<td>"+obj.stack[j].classe+"</td>";
 			var tmpTestHistory = jQuery.parseJSON(obj.stack[j].historico);
 			for(var i=executions.length-1; i>=0; i--){
 				var flagFill = false;
 				for(var k=tmpTestHistory.length-1; k>=0; k--){
 					if(tmpTestHistory[k].id_exec == executions[i].id){
 						if(tmpTestHistory[k].status=="sucesso"){
-							$("#historyResult").append("<td style=\"text-align:center;\"><img src=\"images/passed.gif\" class=\"imgstatus\" /></td>");
+							concatLine+="<td style=\"text-align:center;\"><img src=\"images/passed.gif\" class=\"imgstatus\" /></td>";
 							flagFill = true;
 						}else{
-							$("#historyResult").append("<td style=\"text-align:center;\"><img src=\"images/failed.png\" class=\"imgstatus\" /></td>");						
+							concatLine+="<td style=\"text-align:center;\"><img src=\"images/failed.png\" class=\"imgstatus\" /></td>";
 							flagFill = true;
+							fails++;
 						}
 					}
 				}
 				if(!flagFill){
-					$("#historyResult").append("<td style=\"text-align:center;\">-</td>");					
+					concatLine+="<td style=\"text-align:center;\">-</td>";					
 				}
 			}
-			$("#historyResult").append("</tr>");
+			concatLine+="<td style=\"text-align:center;\" data-sort='"+fails+"'>"+fails+"</td>";					
+			bodyTable+="<tr>"+concatLine+"</tr>";
 		}
+		bodyTable+="</table>";
+		$("#historyResult").append(headerTable+bodyTable);
 		
-		$("#historyResult").append("</table>");
+		new Tablesort(document.getElementById('historyResultTable'), {descending: false});
 	}
 
 	function zerarTotais(){
