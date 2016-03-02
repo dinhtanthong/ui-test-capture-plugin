@@ -7,7 +7,7 @@
 	</parent>
 
 	<artifactId>ui-test-capture</artifactId>
-	<version>1.0.47-SNAPSHOT</version>
+	<version>1.0.47</version>
 	
 	<name>UI Test Capture</name>
 	<description>Display screenshots and stacktraces while your UI Test Suite builds.</description>
@@ -17,7 +17,7 @@
 		<connection>scm:git:ssh://github.com/jenkinsci/ui-test-capture-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/ui-test-capture-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/ui-test-capture-plugin</url>
-    <tag>ui-test-capture-1.0.42</tag>
+    <tag>ui-test-capture-1.0.47</tag>
   </scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
