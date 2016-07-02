@@ -1,19 +1,7 @@
+app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $routeParams, $timeout, Review) {
 
-//Init jQuery functions
-(function($){
-
-	
-//### MODELS
-	var bufferAtual=0;
-	var novoBuffer=0;
-	var versaoAtual=0;
-	var buildInfo;
-	var hash = "";
-	var tests = [];
-
-
-//### VIEW HELPERS
-	function appendResult(obj, rawObj){
+	$scope.appendResult=function(){
+		/*
 		
 		if($('#execdescription').val() == "" && obj.execDescription != ""){
 			$('#execdescription').val(obj.execDescription);
@@ -122,11 +110,22 @@
 				return false;
 			});
 		}
+		 * */
+	}
+
+	$scope.updateResume=function(){
+		/*
+		jQuery(".passou").html(0);
+		jQuery(".falhou").html(0);
+		jQuery(".working").html(0);
+		jQuery(".flaky").html(0);
+		jQuery(".total").html(0);
+		jQuery("#resultado").show();
+		 * */
 	}
 	
-	function appendExecutionHistory(obj){
-		
-		
+	$scope.appendExecutionHistory=function(){
+/*
 		$("#historyResult").html("");
 		var executions = jQuery.parseJSON(ajaxGetExecutions());
 		$("#historyResult").append("<h3>Last 10 runs</h3>");
@@ -168,109 +167,43 @@
 		$("#historyResult").append(headerTable+bodyTable);
 		
 		new Tablesort(document.getElementById('historyResultTable'), {descending: false});
+ * */		
 	}
-
-	function zerarTotais(){
-		jQuery(".passou").html(0);
+	
+	$scope.resetTotals=function(){
+		/*
+ 		jQuery(".passou").html(0);
 		jQuery(".falhou").html(0);
 		jQuery(".working").html(0);
 		jQuery(".flaky").html(0);
 		jQuery(".total").html(0);
 		jQuery("#resultado").show();
-	}
-  
-	function ordenarNodos(){
-		if(jQuery("#ordenar").is(":checked")){
-			ordenar();
-		}
-	}
-
-	function uiInitRun(){
-		  if(buildInfo.id > versaoAtual){
-			  jQuery("#execucao .containerTeste").children().remove();
-			  jQuery('#dlFailApp .containerTeste').children().remove();
-			  jQuery('#dlFailTest .containerTeste').children().remove();
-			  jQuery("#buildInfoId").html(buildInfo.id);
-			  descVersaoAtual = buildInfo.id;
-
-			  bufferAtual=0;
-		  }
-		  jQuery(".reexec").fadeOut("slow");
-		  jQuery(".loadingUiTest").show();
+ 		* */		
 	}
 	
-	function uiStopRun(){
+	$scope.uiInitRun=function(){
+		
+	}
+	
+	$scope.uiStopRun=function(){
+		/*
 		  jQuery(".reexec").fadeIn("slow");
 		  jQuery(".loadingUiTest").hide();
+		*/
 	}
 	  
-	function ordenar(){
+	$scope.ordenar=function(){
+		/*
 		try{
 			jQuery('#execucao .containerTeste').sortElements(function(a, b){return jQuery(a).attr('id') > jQuery(b).attr('id') ? 1 : -1;});
 			jQuery('#dlFailApp .containerTeste').sortElements(function(a, b){return jQuery(a).attr('id') > jQuery(b).attr('id') ? 1 : -1;});
 			jQuery('#dlFailTest .containerTeste').sortElements(function(a, b){return jQuery(a).attr('id') > jQuery(b).attr('id') ? 1 : -1;});
 		}catch(err) {}
+		*/
 	}
 
-
-//### SERVICE HELPERS
-	function ajaxSubmit(obj){
-		var stringAnterior = document.getElementById(obj.name).value;
-		var jsonObj = {id: obj.name, status: obj.value}	
-		jQuery.post(url+"ui-test-capture/ajaxProcess", jsonObj, function( data ) {
-			atualizarQuadroFalhas();
-		});
-	}
-		
-	function ajaxReadResult(exec, stream){
-		var streamsize = tests.length;
-		var jsonObj = {job:job, exec:exec, stream:stream, streamsize:streamsize};
-		var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxQueryHistorico", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-		return jQuery.parseJSON(response);
-	}
-
-	function ajaxReadResultSize(exec){
-		var jsonObj = {job:job, exec:exec};
-		var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/consultarHistoricoExecSize", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-		return jQuery.parseJSON(response);
-	}
-	
-	function ajaxVerifyResults(){
-		var jsonObj = {job:job, exec:descVersaoAtual};
-		var response = jQuery.ajax({type:"GET", url:url+"ui-test-capture/ajaxVerifyResults", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-	}
-	
-	function ajaxUpdateQuarantineDescription(test){
-		var jsonObj = {job:job, test:test, statusDescription: jQuery("[id='description "+test+"']").val()}	
-		var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateQuarantineDescription", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-	}
-
-	
-	jQuery.fn.sortElements = (function(){
-	var sort = [].sort;
-	return function(comparator, getSortable) {
-		getSortable = getSortable || function(){return this;};
-	    var placements = this.map(function(){
-	          var sortElement = getSortable.call(this),
-	              parentNode = sortElement.parentNode,
-	              nextSibling = parentNode.insertBefore(document.createTextNode(''), sortElement.nextSibling);
-	          return function() {
-	              if (parentNode === this) {
-	                  throw new Error("You can't sort elements if any one is a descendant of another.");
-	              }
-	              parentNode.insertBefore(this, nextSibling);
-	              parentNode.removeChild(nextSibling);
-	          };
-	      });
-	      return sort.call(this, comparator).each(function(i){
-	          placements[i].call(getSortable.call(this));
-	      });
-	    };
-	})();
-
-
-//###	CONTROLLER HELPERS
-	function fetchBuffer(){
+	$scope.fetchBuffer=function(){
+		/*
 		jQuery.ajaxSetup({cache:false});
 
 		if(historico){
@@ -286,9 +219,11 @@
 				parseBuffer(jsonres);
 			}
 		}
+		*/
 	}
 
-	function parseBuffer(json){
+	$scope.parseBufferfunction=function(json){
+		/*
 		for(var j=tests.length; j<json.stack.length; j++){
 			appendResult(json.stack[j]);
 		}
@@ -296,12 +231,15 @@
 			ordenarNodos();					
 		}
 		atualizarTotais();
+		*/
 	}
 
-
-//###	CONTROLLER LISTENER
-	jQuery(document).ready(function() {
+	$scope.loop=function(){
+		window.setInterval(function(){
+			console.log('loop');
+		},2000);
 		
+		/*
 		//hide nextBuild
 		if(nextBuild == ''){
 			$(".nextBuild").css("display", "none");
@@ -330,95 +268,8 @@
 		  	  	}catch(err){}
 			},2000);
 		}
-	});
+		*/
+	}	
 	
-	
-//End jQuery functions	
-})(jQuery)
-
-
-function ajaxRun(url){
-	jQuery.post(url, '{}', function( data ) {});
-}
-
-function ajaxUpdateQuarantine(obj){
-	var stringAnterior = document.getElementById(obj.name).value;
-	var jsonObj = {job:job, test: obj.name, status: obj.value}	
-	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateQuarantine", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-
-	if(obj.value == "app_fail"){
-		jQuery("[id='container "+obj.name+"']").detach().appendTo("#dlFailApp");				
-	}else{
-		if(obj.value == "test_fail"){
-			jQuery("[id='container "+obj.name+"']").detach().appendTo("#dlFailTest");		
-		}else{			
-			jQuery("[id='container "+obj.name+"']").detach().appendTo("#execucao");		
-		}
-	}
-	jQuery("[id='container "+obj.name+"'] > dd").hide();		
-	atualizarTotais();
-}
-
-function ajaxUpdateQuarantineDescription(test){
-	var jsonObj = {job:job, test:test, statusDescription: jQuery("[id='description "+test+"']").val()}	
-	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateQuarantineDescription", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-	document.getElementById("description-status-"+test.replace(/\./g,"")).innerHTML = "Saved";
-}
-
-function ajaxUpdateQuarantineResult(test){
-	var jsonObj = {job:job, test:test, exec:descVersaoAtual, statusResult: jQuery("[id='result "+test+"']").val()}
-	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateQuarantineResult", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-	document.getElementById("result-status-"+test.replace(/\./g,"")).innerHTML = "Saved";
-}
-
-function ajaxUpdateQuarantineBehavior(test){
-	var jsonObj = {job:job, test:test, statusBehavior: jQuery("[id='behavior "+test+"']").val()}	
-	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateQuarantineBehavior", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-	document.getElementById("behavior-status-"+test.replace(/\./g,"")).innerHTML = "Saved";
-	if(jQuery("[id='behavior "+test+"']").val() != ""){
-		document.getElementById("label "+test+"").innerHTML = jQuery("[id='behavior "+test+"']").val();		
-	}else{
-		document.getElementById("label "+test+"").innerHTML = test;
-	}
-}
-
-function ajaxUpdateExecDescription(){
-	var jsonObj = {job:job, exec:descVersaoAtual, description: jQuery("[id='execdescription']").val()}
-	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/ajaxUpdateExecDescription", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-	document.getElementById("execdescription-status").innerHTML = "Saved";
-}
-
-function ajaxGetExecutions(){
-	var jsonObj = {job:job}
-	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/getExecutions", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-	return response;
-}
-
-
-function atualizarTotais(){
-	var jsonObj = {job:job, exec:descVersaoAtual};
-	var response = jQuery.ajax({type:"POST", url:url+"ui-test-capture/consultarQuadro", data:jsonObj, async:false, contentType: "application/x-www-form-urlencoded;charset=UTF-8" }).responseText;
-	var retorno = jQuery.parseJSON(response);
-	var success = 0;
-	var fail = 0;
-	var app_fail = 0;
-	var test_fail = 0;
-	var working = 0;
-	var notQuarantined = 0;
-	var total = 0;
-	for(var i=0; i<retorno.length;i++){
-		if(retorno[i].label == "success")success = parseInt(retorno[i].total);
-		if(retorno[i].label == "fail")fail = parseInt(retorno[i].total);
-		if(retorno[i].label == "app_fail")app_fail = parseInt(retorno[i].total);
-		if(retorno[i].label == "test_fail")test_fail = parseInt(retorno[i].total);
-		if(retorno[i].label == "working")notQuarantined = parseInt(retorno[i].total);
-		working = notQuarantined+app_fail;
-		total = app_fail+test_fail+notQuarantined;
-	}
-	jQuery(".passou").html(success);
-	jQuery(".falhou").html(fail);
-	jQuery(".working").html(working);
-	jQuery(".flaky").html(test_fail);
-	jQuery(".total").html(total);
-	jQuery("#resultado").show();
-}
+	$scope.loop();
+});	

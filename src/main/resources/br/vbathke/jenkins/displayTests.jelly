@@ -6,97 +6,104 @@
 	<script>var job='${it.getName()}';</script>
 	<script>var nextBuild='${it.getNextBuild()}';</script>
 	<script>var descVersaoAtual='${it.getVersaoAtual()}';</script>
-	
+
+	<link rel="stylesheet" type="text/css" href="/jenkins/static/1e091584/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="/jenkins/static/1e091584/css/color.css" />
+	<link rel="stylesheet" type="text/css" href="/jenkins/static/1e091584/css/responsive-grid.css" />
     <link rel="stylesheet" href="css/index.css" />
     <link rel="stylesheet" href="css/colorbox.css" />
 	<link rel="stylesheet" href="css/jquery.modal.css" />
 
-	<script src='js/jquery.modal.js'></script>
-	<script src='js/tablesort.js'></script>
-	<script src='js/sorts/tablesort.number.js'></script>
-		    
-	<div class="uiTest">
 
-			<div id="resultado">
-				<div style="float:left;">		
-					<h3>
-						<img src="images/loading.gif" class="loadingUiTest" /> 
-						Test suite results
-					</h3>
-					<table>
-						<tr><td align="right">Test Passed: </td><td><span class="resultado passou">0</span></td></tr>
-						<tr><td align="right">Test Fail: </td><td><span class="resultado falhou">0</span></td></tr>
-						<tr><td align="right">Working Tests:</td><td> <span class="resultado working">0</span></td></tr>
-						<tr><td align="right">Flaky: </td><td><span class="resultado flaky">0</span></td></tr>
-						<tr><td align="right">Total: </td><td><span class="resultado total">0</span></td></tr>
-						<tr><td colspan="2" checked="checked"></td></tr>
-					</table>
-					<div style="text-align:center;margin-top:10px;">
-						<a href="#ex1" rel="modal:open">Execution History</a>				
+	<div ng-app="review">		
+		<div class="uiTest" ng-controller="ReviewCtrl">	
+				<div id="resultado">
+					<div style="float:left;">		
+						<h3>
+							<img src="images/loading.gif" class="loadingUiTest" /> 
+							Test suite results
+						</h3>
+						<table>
+							<tr><td align="right">Test Passed: </td><td><span class="resultado passou">0</span></td></tr>
+							<tr><td align="right">Test Fail: </td><td><span class="resultado falhou">0</span></td></tr>
+							<tr><td align="right">Working Tests:</td><td> <span class="resultado working">0</span></td></tr>
+							<tr><td align="right">Flaky: </td><td><span class="resultado flaky">0</span></td></tr>
+							<tr><td align="right">Total: </td><td><span class="resultado total">0</span></td></tr>
+							<tr><td colspan="2" checked="checked"></td></tr>
+						</table>
+						<div style="text-align:center;margin-top:10px;">
+							<a href="#ex1" rel="modal:open">Execution History</a>				
+						</div>
+					</div>
+				</div>
+	
+		    <div class="headerUiTest">
+				<h2 class="titulo" style="display:block;">
+					UI Test Capture
+				</h2>
+				<h3 class="titulo" style="display:block;">
+					${it.getName()} #<span id="buildInfoId">${it.getVersaoAtual()}</span>
+					<a href="javascript:ajaxRun('${it.getRootUrl()}${it.getProjectUrl()}build?delay=0sec');" class="reexec">
+						<img src="images/reexec.png" style="margin-top:-4px;margin:0 10px 0 10px;"/>
+					</a>
+					<span style="font-size:10px;font-weight:normal;">
+						<input type="checkbox" id="ordenar" checked="checked" /> Order
+						<span style="margin-left:20px;">
+						Go to:
+						 <a href="${it.getRootUrl()}job/${it.getName()}/${it.getPreviousBuild()}/ui-test-capture/">previous build </a> 
+						 <a  style="margin-left:3px;" class="nextBuild" href="${it.getRootUrl()}job/${it.getName()}/${it.getNextBuild()}/ui-test-capture/"> next build</a>
+						</span>
+					</span>
+				</h3>
+				<br />
+				<br />
+				
+				<div style="width:50%;margin-left:10px;">
+					<textarea  class="todo" id="execdescription"></textarea>
+					<div class="description-commands">
+						<span class="description-status" id="execdescription-status"></span>
+						<input type="button" value="Save" onClick="javascript:ajaxUpdateExecDescription();" />
 					</div>
 				</div>
 			</div>
-
-	    <div class="headerUiTest">
-			<h2 class="titulo" style="display:block;">
-				UI Test Capture
-			</h2>
-			<h3 class="titulo" style="display:block;">
-				${it.getName()} #<span id="buildInfoId">${it.getVersaoAtual()}</span>
-				<a href="javascript:ajaxRun('${it.getRootUrl()}${it.getProjectUrl()}build?delay=0sec');" class="reexec">
-					<img src="images/reexec.png" style="margin-top:-4px;margin:0 10px 0 10px;"/>
-				</a>
-				<span style="font-size:10px;font-weight:normal;">
-					<input type="checkbox" id="ordenar" checked="checked" /> Order
-					<span style="margin-left:20px;">
-					Go to:
-					 <a href="${it.getRootUrl()}job/${it.getName()}/${it.getPreviousBuild()}/ui-test-capture/">previous build </a> 
-					 <a  style="margin-left:3px;" class="nextBuild" href="${it.getRootUrl()}job/${it.getName()}/${it.getNextBuild()}/ui-test-capture/"> next build</a>
-					</span>
-				</span>
-			</h3>
-			<br />
-			<br />
-			
-			<div style="width:50%;margin-left:10px;">
-				<textarea  class="todo" id="execdescription"></textarea>
-				<div class="description-commands">
-					<span class="description-status" id="execdescription-status"></span>
-					<input type="button" value="Save" onClick="javascript:ajaxUpdateExecDescription();" />
-				</div>
+	
+			<div id="ex1" style="display:none;">
+				<p>
+					<div id="historyResult"></div>
+				</p>
 			</div>
+	
+			<div class="headerUiTest">
+				<h3 class="titulo" style="display:block;">
+					Test suite
+				</h3>
+			</div>
+			<dl class="accordion" id="execucao"></dl>
+			
+			<div class="headerUiTest" id="hFailApp">
+				<h3 class="titulo">
+					Quarantined tests by App Failure
+				</h3>
+			</div>
+			<dl class="accordion" id="dlFailApp"></dl>
+	
+			<div class="headerUiTest" id="hFailTest">
+				<h3 class="titulo">
+					Quarantined tests by Test Failure (Flaky Tests)
+				</h3>
+			</div>
+			<dl class="accordion" id="dlFailTest"></dl>
+			
+			<pre id="stream" style="display:none;width:600px;height:200px;border:1px solid blue;"></pre>
+	
+			<script src="js/js/angular.min.js" type="text/javascript"></script>
+			<script src="js/js/angular-messages.min.js" type="text/javascript"></script>
+			<script src="js/js/angular-route.min.js" type="text/javascript"></script>
+			<script src="js/js/angular-cookies.min.js" type="text/javascript"></script>
+			<script src="js/js/angular-animate.min.js" type="text/javascript"></script>
+			<script src="js/app.js" type="text/javascript"></script>
+			<script src="js/services/ReviewService.js" type="text/javascript"></script>
+			<script src="js/controllers/ReviewCtrl.js" type="text/javascript"></script>	
 		</div>
-
-		<div id="ex1" style="display:none;">
-			<p>
-				<div id="historyResult"></div>
-			</p>
-		</div>
-
-		<div class="headerUiTest">
-			<h3 class="titulo" style="display:block;">
-				Test suite
-			</h3>
-		</div>
-		<dl class="accordion" id="execucao"></dl>
-		
-		<div class="headerUiTest" id="hFailApp">
-			<h3 class="titulo">
-				Quarantined tests by App Failure
-			</h3>
-		</div>
-		<dl class="accordion" id="dlFailApp"></dl>
-
-		<div class="headerUiTest" id="hFailTest">
-			<h3 class="titulo">
-				Quarantined tests by Test Failure (Flaky Tests)
-			</h3>
-		</div>
-		<dl class="accordion" id="dlFailTest"></dl>
-		
-		<script src='js/jquery.colorbox-min.js'></script>
-		<script src='js/index.js'></script>
-		
-		<pre id="stream" style="display:none;width:600px;height:200px;border:1px solid blue;"></pre>
 	</div>
 </j:jelly>   

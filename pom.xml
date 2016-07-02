@@ -3,11 +3,12 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.644</version>
+		<version>1.599</version>
 	</parent>
 
 	<artifactId>ui-test-capture</artifactId>
 	<version>1.0.48-SNAPSHOT</version>
+	<packaging>hpi</packaging>
 	
 	<name>UI Test Capture</name>
 	<description>Display screenshots and stacktraces while your UI Test Suite builds.</description>
@@ -51,7 +52,7 @@
         <artifactId>maven-hpi-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
-          <compatibleSinceVersion>1.42</compatibleSinceVersion>
+          <compatibleSinceVersion>1.29</compatibleSinceVersion>
         </configuration>
       </plugin>
     </plugins>
