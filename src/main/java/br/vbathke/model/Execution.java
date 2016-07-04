@@ -26,7 +26,7 @@ public class Execution {
 		
 	public Execution(String idExec, int idJob){
 		try {
-			setId(Integer.parseInt(idExec));
+			setId(Integer.parseInt(""+idExec));
 			setIdJob(idJob);
 	    	job = new Job(idJob);
 	    	SqliteHelper conn = new SqliteHelper();

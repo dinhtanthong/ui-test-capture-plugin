@@ -1,5 +1,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-			<script>var historico=true;</script>
+			<script>var doStream=false;</script>
 			<script>var resources='target/';</script>
 			<st:include page="/br/vbathke/jenkins/displayTests.jelly" />
 		    <link rel="stylesheet" href="css/historico.css" />

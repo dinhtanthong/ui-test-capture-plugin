@@ -118,19 +118,21 @@ public class UITestCaptureBase {
     }
     
     public void doConsultarHistoricoExecSize(StaplerRequest request, StaplerResponse response) throws Exception{
-    	Job job = new Job(request.getParameter("job"));
-    	int idJob = 1;
-    	if(job.getId() > 0){
-    		idJob = job.getId();
+    	if(request.getParameter("job") != null && request.getParameter("exec") != null){
+	    	Job job = new Job(request.getParameter("job"));
+	    	int idJob = 1;
+	    	if(job.getId() > 0){
+	    		idJob = job.getId();
+	    	}
+	    	Execution exec = new Execution(request.getParameter("exec"), idJob);
+	      	try {
+	    		String retorno = Integer.toString(exec.consultarHistoricoExecSize());
+	        	if(retorno.equals("")){
+	        		retorno="{\"size\":0}";
+	    		}
+				response.getOutputStream().println("{\"size\":"+retorno+"}");
+	      	} catch (IOException e) {}
     	}
-    	Execution exec = new Execution(request.getParameter("exec"), idJob);
-      	try {
-    		String retorno = Integer.toString(exec.consultarHistoricoExecSize());
-        	if(retorno.equals("")){
-        		retorno="[{}]";
-    		}
-			response.getOutputStream().println(retorno);
-      	} catch (IOException e) {}
     }
     
     public void doGetExecutions(StaplerRequest request, StaplerResponse response) throws Exception{

@@ -160,9 +160,9 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
 						e.printStackTrace();
 					}
 				}
-				outResponse = "hash: "+hash+" lines discovered: "+testStreamSplit.length;
+				outResponse = "{\"hash\": \""+hash+"\", \"lines\": "+testStreamSplit.length+"}";
 			}else{
-				outResponse = "hash: "+hash+" lines: 0";
+				outResponse = "{\"hash\": \""+hash+"\", \"lines\": 0}";
 			}
 			ServletOutputStream out = response.getOutputStream();
 			out.write(outResponse.getBytes("UTF-8"));

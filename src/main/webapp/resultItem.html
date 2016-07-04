@@ -1,0 +1,79 @@
+<dt class="containerPassou accordion">
+	<img src="images/passed.gif" class="imgstatus" ng-if="item.status=='sucesso'" />
+	<img src="images/failed.png" class="imgstatus" ng-if="item.status=='falha'" />
+	<a href="">
+		<span ng-if="item.behavior==''">{{item.metodo}}</span>
+		<span ng-if="item.behavior!=''">{{item.behavior}}</span>
+	</a>	
+</dt>
+<dd class="panel">
+	<div class="infoUiTest">
+		<div class="screenshot"><h2>Screenshot:</h2>
+			<a href="" title="" class="linkScreenshot">
+				<img ng-src="{{urlPrefix}}/ws/target/screenshots/{{item.metodo}}.png" />
+			</a>
+		</div>
+		<div class="stackUiTest"><h2>Stacktrace:</h2><pre class="stackUiTest">{{item.stacktrace}}</pre></div>
+	</div>
+	<div style="width: 100%; display: table; padding-right:90px; ">
+		<div class="observacoes">
+			<h2>Result description:</h2>
+			<textarea class="todo" ng-model="item.descricao"></textarea>
+			<div class="description-commands">
+				<span class="description-status">
+				</span><input type="button" value="Save" ng-click="updateTestResultDescription(item.metodo,item.descricao)" />
+			</div>
+			<div>
+				<h2>Result history:</h2>
+				<div>
+					<span ng-repeat="itemHistory in item.historicoStatus">
+						<img src="images/passed.gif" class="imgstatus" ng-if="itemHistory.status=='sucesso'" />
+						<img src="images/failed.png" class="imgstatus" ng-if="itemHistory.status=='falha'" />										
+						{{itemHistory.id_exec}} 
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="observacoes">
+			<h2>Test description:</h2>
+			<textarea class="todo" ng-model="item.statusDescription"></textarea>
+			<div class="description-commands">
+				<span class="description-status"></span>
+				<input type="button" value="Save" ng-click="updateTestDescription(item.metodo,item.statusDescription)" />
+			</div>
+			
+			<h2>Test behavior:</h2>
+			<input type="text" ng-model="item.behavior" class="behavior" />
+			<div class="description-commands">
+				<span class="description-status"></span>
+				<input type="button" value="Save" ng-click="updateTestBehaviour(item.metodo,item.behavior)" />
+			</div>
+		</div>
+	</div>
+	<div class="comboAnalise">
+		<div ng-if="item.classificacao==''">
+			<input type="button" value="Move to App Failure" ng-click="updateClassification(item.metodo,'app_fail')" />
+			<input type="button" value="Move to Test Failure" ng-click="updateClassification(item.metodo,'test_fail')" />
+		</div>
+		<div ng-if="item.classificacao=='test_fail'">
+			<input type="button" value="Remove from Quarantine" ng-click="updateClassification(item.metodo,'')" />
+			<input type="button" value="Move to App Failure" ng-click="updateClassification(item.metodo,'app_fail')" /> 
+		</div>
+		<div ng-if="item.classificacao=='app_fail'">
+			<input type="button" value="Remove from Quarantine" ng-click="updateClassification(item.metodo,'')" />
+			<input type="button" value="Move to Test Failure" ng-click="updateClassification(item.metodo,'test_fail')" />
+		</div>
+	</div>
+</dd>
+
+<script>
+$(document).ready(function() {
+	var acc = document.getElementsByClassName("accordion");
+	for (var i = 0; i < acc.length; i++) {
+	    acc[i].onclick = function(){
+	        this.classList.toggle("active");
+	        this.nextElementSibling.classList.toggle("show");
+	    }
+	}	
+});
+</script>
