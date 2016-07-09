@@ -170,8 +170,6 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 	
 
 	$scope.job=job;
-	$scope.nextBuild=nextBuild;
-	$scope.previousBuild=previousBuild;
 	$scope.relativepath=relativepath;
 	$scope.doStream=doStream;
 	$scope.exec=execParam;

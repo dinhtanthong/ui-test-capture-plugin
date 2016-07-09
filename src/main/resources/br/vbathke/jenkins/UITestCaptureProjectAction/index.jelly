@@ -7,8 +7,6 @@
 		var url='${it.getRootUrl()}${it.getProjectUrl()}';
 		var relativepath='${it.getBuildArtifacts()}'+resources;
 		var job='${it.getName()}';
-		var nextBuild='${it.getNextBuild()}';
-		var previousBuild='${it.getPreviousBuild()}';
 		var execParam='${it.getVersaoAtual()}';
 	</script>
 

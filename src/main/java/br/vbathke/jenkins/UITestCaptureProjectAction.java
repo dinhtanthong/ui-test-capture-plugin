@@ -80,14 +80,6 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
     public AbstractProject<?,?> getProject(){
     	return project;
     }
-
-    public String getNextBuild(){
-    	return project.getLastBuild().getNextBuild().getId();
-    }    
-
-    public String getPreviousBuild(){
-    	return project.getLastBuild().getPreviousBuild().getId();
-    }        
     
     public String getName(){
     	return project.getName();
