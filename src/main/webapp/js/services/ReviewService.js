@@ -74,6 +74,24 @@ app.factory('Review', function($http) {
     	    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     	});
     }
+
+    var _lastResults = function(job, prefix) {
+    	return $http({
+    	    method: 'POST',
+    	    url: prefix+'/getExecutions',
+    	    data: Object.toparams({job:job}),
+    	    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    	});
+    }    
+    
+    var _allResults = function(job, prefix) {
+    	return $http({
+    	    method: 'POST',
+    	    url: prefix+'/getAllExecutions',
+    	    data: Object.toparams({job:job}),
+    	    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    	});
+    }    
     
     Object.toparams = function ObjecttoParams(obj) {
         var p = [];
@@ -84,7 +102,9 @@ app.factory('Review', function($http) {
     };    
     
     return {
-        updateTestResultDescription: _updateTestResultDescription,
+    	allResults: _allResults,
+    	lastResults: _lastResults,
+    	updateTestResultDescription: _updateTestResultDescription,
         updateTestDescription: _updateTestDescription,
         updateTestBehaviour: _updateTestBehaviour,
         updateExecutionDescription: _updateExecutionDescription,

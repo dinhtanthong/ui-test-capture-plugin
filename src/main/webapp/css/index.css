@@ -5,7 +5,7 @@
 .panel {display: none;}
 .panel.show {display: block !important;}
 .accordion {margin:0px 0px 0px 10px;}
-.accordion dt, .accordion dd {padding: 2px;border-bottom: 0;font-size: 10px; width:100%;}
+.accordion dt, .accordion dd {padding: 2px;border-bottom: 0;font-size: 10px; width:78%;}
 .accordion dt:hover{background:#f7f7f7;}
 .accordion dt img {width:15px;height:auto;margin-bottom:-3px;}
 .accordion dt a, .accordion dd a {color: black;}
@@ -24,7 +24,6 @@
 .passou{color:green;}
 .falhou{color:red;}
 #colorbox{z-index:10000;}
-#uiTest{width:100%;}
 .yui-log{display:none;}
 #side-panel{display:none;}
 .fixedGridLayout #main-panel{padding:0px;}			
@@ -32,11 +31,11 @@
 .behavior{width:100%;margin-bottom:10px;}
 
 
-.infoUiTest {height:460px;}
-.screenshot {font-size: 11px; display:inline-block;width:37%;height:400px;float:left;margin-right:3%;}
-.screenshot img {max-width:100%;height:auto;max-height:400px;}
-.stackUiTest {font-size: 11px; display:inline-block;width:60%;height:400px;}
-.stackUiTest pre { width:90%;height:100%;overflow:auto;white-space: pre-wrap;}
+.infoUiTest {height:260px;}
+.screenshot {font-size: 11px; width:50%;height:200px;float:left;}
+.screenshot img {max-width:100%;height:auto;max-height:200px;}
+.stackUiTest {font-size: 11px;width:100%;height:200px;}
+.stackUiTest pre { height:100%;overflow:auto;white-space: pre-wrap;}
 .uiTest a {text-decoration: none;}
 
 .comboAnalise{margin-bottom:10px;margin-top:5px;margin-right:70px;}

@@ -29,13 +29,18 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
+import net.sf.json.JSONObject;
+
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.StaplerRequest;
 
 public class UITestCaptureRecorder extends Recorder {
 
@@ -44,12 +49,9 @@ public class UITestCaptureRecorder extends Recorder {
 		super();
 	}
 
-	@Extension
-	public static final class DescriptorImpl extends Descriptor{}	
-		
 	@Override
-	public Descriptor getDescriptor() {
-		return (Descriptor) super.getDescriptor();
+	public DescriptorImplRecorder getDescriptor() {
+		return (DescriptorImplRecorder) super.getDescriptor();
 	}
 
 	/* Hide the plugin form main Jenkins menu
@@ -72,13 +74,28 @@ public class UITestCaptureRecorder extends Recorder {
 		}
 		return null;
 	}
+	
+	@Extension
+	public static class DescriptorImplRecorder extends BuildStepDescriptor<Publisher> {
 
-	/* Set the plugin history visible after a run performed
-	 * */
-	@Override
-	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
-			BuildListener listener) throws InterruptedException, IOException {
-			build.getActions().add(new UITestCaptureAction(build));
-		return true;
+		public DescriptorImplRecorder() {
+			load();
+		}
+
+		@Override
+		public boolean isApplicable(Class<? extends AbstractProject> project) {
+			return true;
+		}
+
+		@Override
+		public String getDisplayName() {
+			return "UI Test Capture Publisher";
+		}
+
+		@Override
+		public boolean configure(StaplerRequest staplerRequest, JSONObject json){
+			save();
+			return true;
+		}
 	}
 }

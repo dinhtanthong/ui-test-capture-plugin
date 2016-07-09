@@ -83,6 +83,17 @@ public class Job {
 		}
 	}
 	
+	public String getAllExecutions() throws Exception{
+    	SqliteHelper conn = new SqliteHelper();
+    	JSONArray rs = conn.query( "select * from tb_exec where id_job='"+getId()+"' order by id desc");
+    	String retorno = rs.toString();
+		if(!retorno.equals("")){
+			return retorno; 
+		}else{
+			return "[{}]";
+		}
+	}
+
 	public int getId() {
 		return id;
 	}

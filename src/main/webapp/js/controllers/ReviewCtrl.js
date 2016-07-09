@@ -1,5 +1,17 @@
 app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $routeParams, $timeout, Review) {
-	
+
+	$scope.url = url;
+	$scope.baseurl = baseurl;
+	$scope.urlPrefix = '/jenkins/job/'+job;
+	$scope.urlPrefixPlugin = '/jenkins/job/'+job+'/ui-test-capture';
+	$scope.execDescription="";
+	$scope.doAppend=false;
+	$scope.runningStatus=false;
+	$scope.streamSize=0;
+	$scope.historyPosition=0;
+	$scope.lastToken="";
+	$scope.stack={};
+
 	$scope.loop=function(){
 		Review.queryLastBuild($scope.urlPrefix).success(function(data) {	//Controle de execução do Job
 			$scope.runningStatus=true;
@@ -12,88 +24,159 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 		});
 	
 		Review.consultarHistoricoExecSize($scope.job, $scope.exec, $scope.urlPrefixPlugin).success(function(data) {	//Consulta de informações dos itens
-			//TODO: corrigir algoritmo inoperante
 			if($scope.streamSize < data.size){
 				$scope.updateStack();
 			}
 			$scope.streamSize = data.size;
-		});	
-		
-		//TODO: migrar para o procedimento de execução do job
-		Review.ajaxVerifyResults($scope.job, $scope.exec, $scope.urlPrefixPlugin).success(function(data) {
-			//console.log(data);			
-		});	//Consulta de mudança do número de itens e liquida as ocorrências de registros
+		});
 	}
-
+	
 	$scope.updateClassification=function(test, status){
 		Review.updateClassification($scope.job, test, status, $scope.urlPrefixPlugin).success(function(data) {
 			$scope.updateStack();
 		});
 	}
+	
+	$scope.showTestResultDescriptionStatus=false;
+	$scope.showTestResultDescription=function(){
+		if($scope.showTestResultDescriptionStatus)
+			$scope.showTestResultDescriptionStatus=false;
+		else
+			$scope.showTestResultDescriptionStatus=true;
+	}
 
 	$scope.updateTestResultDescription=function(test, description){
-		Review.updateTestResultDescription($scope.job, test, $scope.exec, description, $scope.urlPrefixPlugin).success(function(data) {});
+		Review.updateTestResultDescription($scope.job, test, $scope.exec, description, $scope.urlPrefixPlugin).success(function(data) {
+			$scope.showTestResultDescription();			
+		});
+	}
+
+	$scope.showTestDescriptionStatus=false;
+	$scope.showTestDescription=function(){
+		if($scope.showTestDescriptionStatus)
+			$scope.showTestDescriptionStatus=false;
+		else
+			$scope.showTestDescriptionStatus=true;
 	}
 
 	$scope.updateTestDescription=function(test, description){
-		Review.updateTestDescription($scope.job, test, description, $scope.urlPrefixPlugin).success(function(data) {});
+		Review.updateTestDescription($scope.job, test, description, $scope.urlPrefixPlugin).success(function(data) {
+			$scope.showTestDescription();			
+		});
+	}
+
+	$scope.showTestBehaviourStatus=false;
+	$scope.showTestBehaviour=function(){
+		if($scope.showTestBehaviourStatus)
+			$scope.showTestBehaviourStatus=false;
+		else
+			$scope.showTestBehaviourStatus=true;
 	}
 
 	$scope.updateTestBehaviour=function(test, description){
-		Review.updateTestBehaviour($scope.job, test, description, $scope.urlPrefixPlugin).success(function(data) {});
+		Review.updateTestBehaviour($scope.job, test, description, $scope.urlPrefixPlugin).success(function(data) {
+			$scope.showTestBehaviour();			
+		});
+	}
+
+	$scope.showExecutionDescriptionStatus=false;
+	$scope.showExecutionDescription=function(){
+		if($scope.showExecutionDescriptionStatus){
+			$scope.showExecutionDescriptionStatus=false;
+		}else{
+			$scope.showExecutionDescriptionStatus=true;
+		}
 	}
 
 	$scope.updateExecutionDescription=function(description){
-		Review.updateExecutionDescription($scope.job, $scope.exec, description, $scope.urlPrefixPlugin).success(function(data) {});
+		Review.updateExecutionDescription($scope.job, $scope.exec, description, $scope.urlPrefixPlugin).success(function(data) {
+			$scope.execDescription = description;
+			$scope.showExecutionDescription();
+		});
 	}
 	
 	$scope.updateStack=function(){
 		Review.ajaxQueryHistorico($scope.job, $scope.exec, $scope.doStream, $scope.streamSize, $scope.urlPrefixPlugin).success(function(data) {
-			console.log(data);
-
 			$scope.stack = data.stack;
 			$scope.resume.passed = 0;
 			$scope.resume.failed = 0;
 			$scope.resume.flaky = 0;
+			$scope.resume.knowissue = 0;
 			$scope.resume.total = $scope.stack.length;
-			for(var i=0;i<$scope.stack.length;i++){	//Parse do histório TODO: trazer parseado
-				$scope.stack[i].historicoStatus = jQuery.parseJSON($scope.stack[i].historico);
+			for(var i=0;i<$scope.stack.length;i++){	//Parse do histório TODO: trazer parseado pela API
+				try{
+					$scope.stack[i].historicoStatus = jQuery.parseJSON($scope.stack[i].historico);
+				}catch(err){}
 				($scope.stack[i].status=='sucesso'&&($scope.stack[i].classificacao!='app_fail'&&$scope.stack[i].classificacao!='test_fail')?$scope.resume.passed++:"");
 				($scope.stack[i].status=='falha'&&($scope.stack[i].classificacao!='app_fail'&&$scope.stack[i].classificacao!='test_fail')?$scope.resume.failed++:"");
 				($scope.stack[i].classificacao=='test_fail'?$scope.resume.flaky++:"");
 				($scope.stack[i].classificacao=='app_fail'?$scope.resume.knowissue++:"");
+				$scope.execDescription = $scope.stack[i].execDescription;
 			}
-		});		
+			$scope.getAllResults();			
+		});	
+	}
+
+	$scope.getAllResults=function(){
+		Review.allResults($scope.job, $scope.urlPrefixPlugin).success(function(data) {
+			$scope.executionHistory = data;
+		});
+	}
+	
+	$scope.historyPrevious=function(){
+		if($scope.historyPosition <= $scope.executionHistory.length){
+			$scope.historyPosition++;
+		}
+		$scope.historySetType();
+		$scope.changeRun($scope.executionHistory[$scope.historyPosition].id);
+	}
+	
+	$scope.historyNext=function(){
+		if($scope.historyPosition > 0){
+			$scope.historyPosition--;
+		}
+		$scope.historySetType();
+		$scope.changeRun($scope.executionHistory[$scope.historyPosition].id);
+	}
+
+	$scope.historySetType=function(){
+		if($scope.executionHistory == 0){
+			$scope.historyType="present";
+		}else{
+			$scope.historyType="past";			
+		}
+	}
+	
+	$scope.changeRun=function(idExec){
+		$scope.exec = idExec;
+		$scope.updateStack();		
 	}
 	
 	$scope.resetResume=function(){
 		$scope.resume= {passed:0,failed:0,working:0,operational:0,flaky:0,knowissue:0,total:0};
+		$scope.execDescription = "";
 	}
 	
 	$scope.runJob=function(){
-		$scope.stack={};
+		Review.runJob($scope.baseurl+'job/'+$scope.job+'/build?delay=0sec').success(function(data) {});
+		$scope.runningStatus=true;
 		$scope.resetResume();
-		Review.runJob(urlRunJob).success(function(data) {});
+		$scope.stack={};
 	}
 	$scope.setExec=function(pExec){
 		console.log(pExec);
 		$scope.exec = pExec;
 	}
 	
-	$scope.urlPrefix = '/jenkins/job/'+job;
-	$scope.urlPrefixPlugin = '/jenkins/job/'+job+'/ui-test-capture';
+
 	$scope.job=job;
 	$scope.nextBuild=nextBuild;
 	$scope.previousBuild=previousBuild;
 	$scope.relativepath=relativepath;
 	$scope.doStream=doStream;
-	$scope.doAppend=false;
-	$scope.runningStatus=false;
-	$scope.streamSize=0;
-	$scope.lastToken="";
-	$scope.stack={};
 	$scope.exec=execParam;
 	$scope.resetResume();
+	$scope.executionHistory={};
 	
 	//Loop 'do while' forever
 	$scope.loop();

@@ -38,6 +38,8 @@ import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletOutputStream;
 
+import jenkins.model.Jenkins;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.StaplerRequest;
@@ -49,22 +51,15 @@ import br.vbathke.model.Job;
 import br.vbathke.model.Result;
 import br.vbathke.model.Test;
 
-public class UITestCaptureProjectAction extends UITestCaptureBase implements ProminentProjectAction{
+public class UITestCaptureProjectAction implements ProminentProjectAction{
 
     public final AbstractProject<?,?> project;
     
     private String hash = "";
     private String fileString = "";
-
     
     public UITestCaptureProjectAction(AbstractProject<?,?> project) throws IOException, NoSuchAlgorithmException {
     	this.project = project;
-    	try{
-    	fileString = project.getLastBuild().getWorkspace().toString()+"/target/teststream.txt";
-    	}catch(Exception e){
-    		System.out.println("/target/teststream.txt não encontrado");
-    	}
-    	hash = md5Hash(hash);
     }
 
     @Override
@@ -109,92 +104,133 @@ public class UITestCaptureProjectAction extends UITestCaptureBase implements Pro
     public String getProjectUrl(){
     	return getProject().getUrl();
     }
-        
-    public void doAjaxVerifyResults(StaplerRequest request, StaplerResponse response){
-    	//System.out.println("getLastBuild().getRootDir(): 			"+project.getLastBuild().getRootDir().toString());
-    	//System.out.println("project.getLastBuild().getWorkspace():	"+project.getLastBuild().getWorkspace().toString());
-    	
-		try {
-			String testStreamLocal = getTestStream();
-	    	String tmpHash = md5Hash(testStreamLocal);
-	    	String[] testStreamSplit;
-	    	String outResponse = "";
-	    	
-			//Se arquivo possuí mudanças
-			if(testStreamPossuiDiferenca()){
-				Job job = new Job(getName());
-		    	Execution exec = new Execution(request.getParameter("exec"), job.getId());
 
-		    	//unstack from file and record on db
-				testStreamSplit = testStreamLocal.split("\\n");
-				for(int i=0; i<testStreamSplit.length; i++){
-					if(!testStreamSplit[i].equals("")){
-						JsonParseSingleQuote jsonLinha = new JsonParseSingleQuote(testStreamSplit[i]);
-				    	
-				    	Test test = new Test(getName(), jsonLinha.get("metodo"));
-				    	test.setIdJob(job.getId());
-				    	test.setTest(jsonLinha.get("metodo"));
-				    	test.setTestClass(jsonLinha.get("classe"));
-				    	test.save();
-
-				    	//record the result
-				    	Result result = new Result(job.getId(), exec.getId(), test.getTest());
-				    	result.setStatus(jsonLinha.get("status"));
-				    	try{
-					    	result.setStacktrace(FileUtils.readFileToString(new File(project.getRootDir().getCanonicalPath()+"/workspace/target/surefire-reports/"+jsonLinha.get("classe").trim()+".txt"), "UTF-8"));				    		
-				    	}catch(Exception e){
-				    		result.setStacktrace("");
-				    	}
-				    	result.save();						
-
-				    	testStreamLocal = testStreamLocal.replace(testStreamSplit[i]+"\n", "");
-					}
-				}
-				hash = tmpHash;
-
-				//se após o processamento o arquivo NÃO foi alterado, desempilhe
-				if(!testStreamPossuiDiferenca()){
-					try{
-						Files.write(Paths.get(fileString), testStreamLocal.getBytes(StandardCharsets.UTF_8));
-					}catch(Exception e){
-						e.printStackTrace();
-					}
-				}
-				outResponse = "{\"hash\": \""+hash+"\", \"lines\": "+testStreamSplit.length+"}";
-			}else{
-				outResponse = "{\"hash\": \""+hash+"\", \"lines\": 0}";
-			}
+    public String getRootUrl(){
+    	return ""+Jenkins.getInstance().getRootUrl();
+    }
+    
+    public Object getUITestCaptureProjectAction(){
+    	return UITestCaptureProjectAction.class;
+    }
+    
+    public void doAjaxQueryHistorico(StaplerRequest request, StaplerResponse response) throws Exception {
+    	int streamsize = 0;
+    	if(request.getParameter("streamsize") != null){
+    		streamsize = Integer.parseInt(request.getParameter("streamsize"));
+    	}
+    	Job job = new Job(request.getParameter("job"));
+    	Execution exec = new Execution(request.getParameter("exec"), job.getId());
+    	String historico = exec.consultarHistoricoExec(request.getParameter("stream"), streamsize);
+      	try {
 			ServletOutputStream out = response.getOutputStream();
-			out.write(outResponse.getBytes("UTF-8"));
-		} catch (Exception e) {
-			e.printStackTrace();
+			out.write((historico).getBytes("UTF-8")); 
+      	} catch (IOException e) {
+			System.out.println(e);
 		}
     }
     
-    public boolean testStreamPossuiDiferenca() throws NoSuchAlgorithmException{
-    	String tmpHash = md5Hash(getTestStream());
-		if(!hash.equals(tmpHash)){
-			return true;
-		}else{
-			return false;
-		}
+    public void doAjaxUpdateQuarantine(StaplerRequest request, StaplerResponse response) {
+    	Test test = new Test(request.getParameter("job"), request.getParameter("test"));
+    	test.setStatus(request.getParameter("status"));
+    	test.save();
+      	try {
+			response.getOutputStream().println("{\"message\":\"sucesso\"}");
+      	} catch (IOException e) {
+			System.out.println(e);
+		}    	
+    }
+
+    public void doAjaxUpdateQuarantineDescription(StaplerRequest request, StaplerResponse response) {
+    	Test test = new Test(request.getParameter("job"), request.getParameter("test"));
+    	test.setStatusDescription(request.getParameter("statusDescription"));
+    	test.save();
+      	try {
+			response.getOutputStream().println("{\"message\":\"sucesso\"}");
+      	} catch (IOException e) {}    	
     }
     
-    public String getTestStream(){
-		try{
-			return FileUtils.readFileToString(new File(fileString), "UTF-8");
-		}catch(Exception e){
-			return "";
-		}
+    public void doAjaxUpdateQuarantineResult(StaplerRequest request, StaplerResponse response) {
+    	Job job = new Job(request.getParameter("job"));    	
+    	Result result = new Result(job.getId(), Integer.parseInt(request.getParameter("exec")), request.getParameter("test"));
+    	result.setDescription(request.getParameter("statusResult"));
+    	result.save();
+      	try {
+			response.getOutputStream().println("{\"message\":\"sucesso\"}");
+      	} catch (IOException e) {}    	
     }
     
-    public String md5Hash(String data) throws NoSuchAlgorithmException{
-		MessageDigest messageDigest;
-		messageDigest = MessageDigest.getInstance("MD5");
-		messageDigest.reset();
-		messageDigest.update(data.getBytes(Charset.forName("UTF8")));
-		byte[] resultByte = messageDigest.digest();
-		String result = new String(Hex.encodeHex(resultByte));
-		return result;
+    public void doAjaxUpdateQuarantineBehavior(StaplerRequest request, StaplerResponse response) {
+    	Test test = new Test(request.getParameter("job"), request.getParameter("test"));
+    	test.setBehavior(request.getParameter("statusBehavior"));
+    	test.save();
+      	try {
+			response.getOutputStream().println("{\"message\":\"sucesso\"}");
+      	} catch (IOException e) {}    	
     }
+    
+    public void doAjaxUpdateExecDescription(StaplerRequest request, StaplerResponse response) throws Exception{
+    	Job job = new Job(request.getParameter("job"));
+    	int idJob = 1;
+    	if(job.getId() > 0){
+    		idJob = job.getId();
+    	}
+    	Execution exec = new Execution(request.getParameter("exec"), idJob);
+    	exec.setDescription(request.getParameter("description"));
+    	exec.save();
+      	try {
+			response.getOutputStream().println("{\"message\":\"sucesso\"}");
+      	} catch (IOException e) {}    	
+    }    
+    
+    public void doConsultarQuadro(StaplerRequest request, StaplerResponse response) throws Exception{
+    	Job job = new Job(request.getParameter("job"));
+    	Execution exec = new Execution(request.getParameter("exec"), job.getId());
+      	try {
+    		String retorno = exec.consultarQuadro();
+        	if(retorno.equals("")){
+        		retorno="[{}]";
+    		}
+			response.getOutputStream().println(retorno);
+      	} catch (IOException e) {}
+    }
+    
+    public void doConsultarHistoricoExecSize(StaplerRequest request, StaplerResponse response) throws Exception{
+    	if(request.getParameter("job") != null && request.getParameter("exec") != null){
+	    	Job job = new Job(request.getParameter("job"));
+	    	int idJob = 1;
+	    	if(job.getId() > 0){
+	    		idJob = job.getId();
+	    	}
+	    	Execution exec = new Execution(request.getParameter("exec"), idJob);
+	      	try {
+	    		String retorno = Integer.toString(exec.consultarHistoricoExecSize());
+	        	if(retorno.equals("")){
+	        		retorno="{\"size\":0}";
+	    		}
+				response.getOutputStream().println("{\"size\":"+retorno+"}");
+	      	} catch (IOException e) {}
+    	}
+    }
+    
+    public void doGetExecutions(StaplerRequest request, StaplerResponse response) throws Exception{
+    	Job job = new Job(request.getParameter("job"));
+      	try {
+    		String retorno = job.getExecutions();
+        	if(retorno.equals("")){
+        		retorno="[{}]";
+    		}
+			response.getOutputStream().println(retorno);
+      	} catch (IOException e) {}
+    }
+
+    public void doGetAllExecutions(StaplerRequest request, StaplerResponse response) throws Exception{
+    	Job job = new Job(request.getParameter("job"));
+      	try {
+    		String retorno = job.getAllExecutions();
+        	if(retorno.equals("")){
+        		retorno="[{}]";
+    		}
+			response.getOutputStream().println(retorno);
+      	} catch (IOException e) {}
+    }    
 }

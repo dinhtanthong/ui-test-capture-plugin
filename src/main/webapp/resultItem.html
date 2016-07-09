@@ -4,25 +4,50 @@
 	<a href="">
 		<span ng-if="item.behavior==''">{{item.metodo}}</span>
 		<span ng-if="item.behavior!=''">{{item.behavior}}</span>
-	</a>	
+	</a>
 </dt>
-<dd class="panel">
-	<div class="infoUiTest">
-		<div class="screenshot"><h2>Screenshot:</h2>
-			<a href="" title="" class="linkScreenshot">
+<dd class="panel" style="padding-bottom:30px;">
+	<div class="commands" style="width:100%;" >
+		<div ng-if="item.classificacao==''">
+			<a href="" ng-click="updateClassification(item.metodo,'app_fail')">Move to App Failure</a> - 
+			<a href="" ng-click="updateClassification(item.metodo,'test_fail')">Move to Test Failure</a>
+		</div>
+		<div ng-if="item.classificacao=='test_fail'">
+			<a href="" ng-click="updateClassification(item.metodo,'')">Remove from Quarantine</a> - 
+			<a href="" ng-click="updateClassification(item.metodo,'app_fail')">Move to App Failure</a> 
+		</div>
+		<div ng-if="item.classificacao=='app_fail'">
+			<a href="" ng-click="updateClassification(item.metodo,'')">Remove from Quarantine</a> - 
+			<a href="" ng-click="updateClassification(item.metodo,'test_fail')">Move to Test Failure</a>
+		</div>
+	</div>
+	<div style="width:100%;" class="infoUiTest">
+		<div class="screenshot" style="width:50%;">
+			<h2>Screenshot:</h2>
+			<a href="{{urlPrefix}}/ws/target/screenshots/{{item.metodo}}.png" target="_blank" title="" class="linkScreenshot">
 				<img ng-src="{{urlPrefix}}/ws/target/screenshots/{{item.metodo}}.png" />
 			</a>
 		</div>
-		<div class="stackUiTest"><h2>Stacktrace:</h2><pre class="stackUiTest">{{item.stacktrace}}</pre></div>
+		<div class="observacoes" style="width:50%;">
+			<h2>Stacktrace:</h2>
+			<pre class="stackUiTest">{{item.stacktrace}}</pre>
+		</div>
 	</div>
-	<div style="width: 100%; display: table; padding-right:90px; ">
-		<div class="observacoes">
-			<h2>Result description:</h2>
-			<textarea class="todo" ng-model="item.descricao"></textarea>
-			<div class="description-commands">
-				<span class="description-status">
-				</span><input type="button" value="Save" ng-click="updateTestResultDescription(item.metodo,item.descricao)" />
+	<div style="width: 100%; display: table; ">
+		<div class="observacoes" style="width:50%;">
+			<h2>
+				Result description:
+				<a href="" style="color:#d3d3d3;font-size:9px;" ng-if="!showTestResultDescriptionStatus" ng-click="showTestResultDescription()">(edit)</a>
+			</h2>
+			<div ng-if="showTestResultDescriptionStatus">
+				<textarea class="todo" ng-model="item.descricao"></textarea>
+				<div class="description-commands">
+					<span class="description-status">
+					<a href="" style="color:#d3d3d3;font-size:9px;" ng-click="showTestResultDescription()">Cancel</a>
+					</span><input type="button" value="Save" ng-click="updateTestResultDescription(item.metodo,item.descricao)" />
+				</div>
 			</div>
+			<span ng-if="item.statusResultDescription!='' && !showTestResultDescriptionStatus">{{item.descricao}}</span>
 			<div>
 				<h2>Result history:</h2>
 				<div>
@@ -33,35 +58,34 @@
 					</span>
 				</div>
 			</div>
-		</div>
-		<div class="observacoes">
-			<h2>Test description:</h2>
-			<textarea class="todo" ng-model="item.statusDescription"></textarea>
-			<div class="description-commands">
-				<span class="description-status"></span>
-				<input type="button" value="Save" ng-click="updateTestDescription(item.metodo,item.statusDescription)" />
+		</div>		
+		
+		<div class="observacoes" style="width:50%;">
+			<h2>
+				Expected test behaviour
+				<a href="" style="color:#d3d3d3;font-size:9px;" ng-if="!showTestDescriptionStatus" ng-click="showTestDescription()">(edit)</a>
+			</h2>
+			<div ng-if="showTestDescriptionStatus">
+				<textarea class="todo" ng-model="item.statusDescription"></textarea>
+				<div class="description-commands">
+					<a href="" style="color:#d3d3d3;font-size:9px;" ng-click="showTestDescription()">Cancel</a>
+					<input type="button" value="Save" ng-click="updateTestDescription(item.metodo,item.statusDescription)" />
+				</div>
 			</div>
+			<span ng-if="item.statusDescription!='' && !showTestDescriptionStatus">{{item.statusDescription}}</span>
 			
-			<h2>Test behavior:</h2>
-			<input type="text" ng-model="item.behavior" class="behavior" />
-			<div class="description-commands">
-				<span class="description-status"></span>
-				<input type="button" value="Save" ng-click="updateTestBehaviour(item.metodo,item.behavior)" />
+			<h2>
+				Test description 
+				<a href="" style="color:#d3d3d3;font-size:9px;" ng-if="!showTestBehaviourStatus" ng-click="showTestBehaviour()">(edit)</a>
+			</h2>
+			<div ng-if="showTestBehaviourStatus">
+				<input type="text" ng-model="item.behavior" class="behavior" />
+				<div class="description-commands">
+					<a href="" style="color:#d3d3d3;font-size:9px;" ng-click="showTestBehaviour()">Cancel</a>
+					<input type="button" value="Save" ng-click="updateTestBehaviour(item.metodo,item.behavior)" />
+				</div>
 			</div>
-		</div>
-	</div>
-	<div class="comboAnalise">
-		<div ng-if="item.classificacao==''">
-			<input type="button" value="Move to App Failure" ng-click="updateClassification(item.metodo,'app_fail')" />
-			<input type="button" value="Move to Test Failure" ng-click="updateClassification(item.metodo,'test_fail')" />
-		</div>
-		<div ng-if="item.classificacao=='test_fail'">
-			<input type="button" value="Remove from Quarantine" ng-click="updateClassification(item.metodo,'')" />
-			<input type="button" value="Move to App Failure" ng-click="updateClassification(item.metodo,'app_fail')" /> 
-		</div>
-		<div ng-if="item.classificacao=='app_fail'">
-			<input type="button" value="Remove from Quarantine" ng-click="updateClassification(item.metodo,'')" />
-			<input type="button" value="Move to Test Failure" ng-click="updateClassification(item.metodo,'test_fail')" />
+			<span ng-if="item.behavior!='' && !showTestBehaviourStatus">{{item.behavior}}</span>
 		</div>
 	</div>
 </dd>
