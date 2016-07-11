@@ -11,6 +11,8 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 	$scope.historyPosition=0;
 	$scope.lastToken="";
 	$scope.stack={};
+	$scope.executionHistoryLast10={};
+	$scope.executionHistory={};
 
 	$scope.loop=function(){
 		Review.queryLastBuild($scope.urlPrefix).success(function(data) {	//Controle de execução do Job
@@ -35,6 +37,14 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 		Review.updateClassification($scope.job, test, status, $scope.urlPrefixPlugin).success(function(data) {
 			$scope.updateStack();
 		});
+	}
+	
+	$scope.showLast10ExecStatus=false;
+	$scope.showLast10Exec=function(){
+		if($scope.showLast10ExecStatus)
+			$scope.showLast10ExecStatus=false;
+		else
+			$scope.showLast10ExecStatus=true;
 	}
 	
 	$scope.showTestResultDescriptionStatus=false;
@@ -106,6 +116,17 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 			for(var i=0;i<$scope.stack.length;i++){	//Parse do histório TODO: trazer parseado pela API
 				try{
 					$scope.stack[i].historicoStatus = jQuery.parseJSON($scope.stack[i].historico);
+
+					//sumPassedStats
+					var sumhist = 10;
+					$scope.stack[i].sumPassed=0;
+					if($scope.stack[i].historicoStatus.length<10)
+						sumhist = $scope.stack[i].historicoStatus.length;
+					for(var j=0; j<sumhist;j++){
+						if($scope.stack[i].historicoStatus[j].status=='passed'){
+							$scope.stack[i].sumPassed++;
+						}
+					}
 				}catch(err){}
 				($scope.stack[i].status=='passed'&&($scope.stack[i].classificacao!='app_fail'&&$scope.stack[i].classificacao!='test_fail')?$scope.resume.passed++:"");
 				(($scope.stack[i].status=='error'||$scope.stack[i].status=='failure'||$scope.stack[i].status=='skipped')&&($scope.stack[i].classificacao!='app_fail'&&$scope.stack[i].classificacao!='test_fail')?$scope.resume.failed++:"");
@@ -113,13 +134,22 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 				($scope.stack[i].classificacao=='app_fail'?$scope.resume.knowissue++:"");
 				$scope.execDescription = $scope.stack[i].execDescription;
 			}
-			$scope.getAllResults();			
+
+			$scope.getAllResults();
 		});	
 	}
 
 	$scope.getAllResults=function(){
 		Review.allResults($scope.job, $scope.urlPrefixPlugin).success(function(data) {
 			$scope.executionHistory = data;
+			
+			//last 10 executions ref
+			var sizeHis=10;
+			if($scope.executionHistory.length<10)
+				sizeHis=$scope.executionHistory.length;
+			for(var i=0;i<sizeHis;i++){
+				try{$scope.executionHistoryLast10[i] = $scope.executionHistory[i];}catch(err){}
+			}
 		});
 	}
 	
@@ -154,6 +184,7 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 	
 	$scope.resetResume=function(){
 		$scope.resume= {passed:0,failed:0,working:0,operational:0,flaky:0,knowissue:0,total:0};
+		$scope.showLast10ExecStatus=false;
 		$scope.execDescription = "";
 	}
 	
@@ -168,13 +199,11 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 		$scope.exec = pExec;
 	}
 	
-
 	$scope.job=job;
 	$scope.relativepath=relativepath;
 	$scope.doStream=doStream;
 	$scope.exec=execParam;
 	$scope.resetResume();
-	$scope.executionHistory={};
 	
 	//Loop 'do while' forever
 	$scope.loop();

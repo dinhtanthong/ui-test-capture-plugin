@@ -37,12 +37,37 @@
 <form>
 	<div class="uiTest">
 		<div class="headerUiTest">
-			<div style="font-size: 10px; font-weight: normal; float: right; margin-right: 20px;">
-				<div style="text-align: right; margin-top: 10px;">Execution history</div>
-				<a href="" ng-click="historyPrevious()">Previous</a> 
-				<a href="" ng-click="historyNext()">Next</a>
-			</div>
 			<h2 class="titulo" style="display: block;">UI Test Capture</h2>
+
+			<div ng-if="showLast10ExecStatus">
+				<h3 class="titulo" style="display: inline;">Last 10 execution</h3>
+				<a href="" ng-click="showLast10Exec()" style="font-size: 10px; font-weight: normal;">(hide)</a>
+				<br />
+				<br />
+				<table>
+					<tr>
+						<th></th>
+						<th ng-repeat="itemHis in executionHistoryLast10" align="center">{{itemHis.id}}</th>
+					</tr>
+					<tr ng-repeat="itemStack in stack | orderBy:'-sumPassed'">
+						<td>
+							<span ng-if="itemStack.behavior==''">{{itemStack.metodo}}</span>
+							<span ng-if="itemStack.behavior!=''">{{itemStack.behavior}}</span>
+						</td>
+						<td ng-repeat="itemHis in executionHistoryLast10" align="center">
+							<span ng-repeat="itemStackHistorico in itemStack.historicoStatus">
+								<span ng-if="itemStackHistorico.id_exec==itemHis.id">
+									<img src="images/passed.gif" class="imgstatus" ng-if="itemStackHistorico.status=='passed'" />
+									<img src="images/failed.png" class="imgstatus" ng-if="itemStackHistorico.status=='error'||itemStackHistorico.status=='failure'||itemStackHistorico.status=='skipped'" />
+								</span>
+							</span>
+						</td>
+					</tr>
+				</table>
+				<br />
+				<br />
+				<br />
+			</div>
 
 			<h3 class="titulo" style="display: block;">
 				<span ng-bind="job"></span> #<span>{{exec}}</span>
@@ -54,6 +79,11 @@
 						<a href="" ng-click="runJob()" class="reexec">
 						<img src="images/reexec.png" style="margin-top: -4px; margin: 0 10px 0 10px;" /></a>
 					</span>
+					<div style="display:inline;font-size: 10px; font-weight: normal;">
+							History: <a href="" ng-click="historyPrevious()">Previous</a> - <a href="" ng-click="historyNext()">Next</a>
+							<span ng-if="!showLast10ExecStatus">|</span> 
+							<a href="" ng-click="showLast10Exec()" ng-if="!showLast10ExecStatus">show last 10 resume</a>
+					</div>
 				</span>
 				<table>
 					<tr>
