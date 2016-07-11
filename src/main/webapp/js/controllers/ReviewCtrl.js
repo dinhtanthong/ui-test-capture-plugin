@@ -107,8 +107,8 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 				try{
 					$scope.stack[i].historicoStatus = jQuery.parseJSON($scope.stack[i].historico);
 				}catch(err){}
-				($scope.stack[i].status=='sucesso'&&($scope.stack[i].classificacao!='app_fail'&&$scope.stack[i].classificacao!='test_fail')?$scope.resume.passed++:"");
-				($scope.stack[i].status=='falha'&&($scope.stack[i].classificacao!='app_fail'&&$scope.stack[i].classificacao!='test_fail')?$scope.resume.failed++:"");
+				($scope.stack[i].status=='passed'&&($scope.stack[i].classificacao!='app_fail'&&$scope.stack[i].classificacao!='test_fail')?$scope.resume.passed++:"");
+				(($scope.stack[i].status=='error'||$scope.stack[i].status=='failure'||$scope.stack[i].status=='skipped')&&($scope.stack[i].classificacao!='app_fail'&&$scope.stack[i].classificacao!='test_fail')?$scope.resume.failed++:"");
 				($scope.stack[i].classificacao=='test_fail'?$scope.resume.flaky++:"");
 				($scope.stack[i].classificacao=='app_fail'?$scope.resume.knowissue++:"");
 				$scope.execDescription = $scope.stack[i].execDescription;

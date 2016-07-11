@@ -1,6 +1,6 @@
 <dt class="containerPassou accordion">
-	<img src="images/passed.gif" class="imgstatus" ng-if="item.status=='sucesso'" />
-	<img src="images/failed.png" class="imgstatus" ng-if="item.status=='falha'" />
+	<img src="images/passed.gif" class="imgstatus" ng-if="item.status=='passed'" />
+	<img src="images/failed.png" class="imgstatus" ng-if="item.status=='error'||item.status=='failure'||item.status=='skipped'" />
 	<a href="">
 		<span ng-if="item.behavior==''">{{item.metodo}}</span>
 		<span ng-if="item.behavior!=''">{{item.behavior}}</span>
@@ -30,7 +30,7 @@
 		</div>
 		<div class="observacoes" style="width:50%;">
 			<h2>Stacktrace:</h2>
-			<pre class="stackUiTest">{{item.stacktrace}}</pre>
+			<pre class="stackUiTest" style="overflow:auto;">{{item.stacktrace}}</pre>
 		</div>
 	</div>
 	<div style="width: 100%; display: table; ">
@@ -52,8 +52,8 @@
 				<h2>Result history:</h2>
 				<div>
 					<span ng-repeat="itemHistory in item.historicoStatus">
-						<img src="images/passed.gif" class="imgstatus" ng-if="itemHistory.status=='sucesso'" />
-						<img src="images/failed.png" class="imgstatus" ng-if="itemHistory.status=='falha'" />										
+						<img src="images/passed.gif" class="imgstatus" ng-if="itemHistory.status=='passed'" />
+						<img src="images/failed.png" class="imgstatus" ng-if="itemHistory.status=='error'||itemHistory.status=='failure'||itemHistory.status=='skipped'" />
 						{{itemHistory.id_exec}} 
 					</span>
 				</div>

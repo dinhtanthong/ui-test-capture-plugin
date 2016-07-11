@@ -1,95 +1,117 @@
-	<link rel="stylesheet" type="text/css" href="/jenkins/static/1e091584/css/style.css" />
-	<link rel="stylesheet" type="text/css" href="/jenkins/static/1e091584/css/color.css" />
-	<link rel="stylesheet" type="text/css" href="/jenkins/static/1e091584/css/responsive-grid.css" />
-    <link rel="stylesheet" href="css/index.css" />
-    <link rel="stylesheet" href="css/colorbox.css" />
-	<link rel="stylesheet" href="css/jquery.modal.css" />
+<div id="page-head">
+	<div id="header">
+		<div class="logo">
+			<a id="jenkins-home-link" href="{{baseurl}}">
+				<img id="jenkins-head-icon" alt="title" src="{{baseurl}}static/f2001d85/images/headshot.png">
+				<img id="jenkins-name-icon" height="34" alt="title" width="139" src="{{baseurl}}static/f2001d85/images/title.png">
+			</a>
+		</div>
+	</div>
+	<div id="breadcrumbBar">
+		<link rel="stylesheet" href="{{baseurl}}adjuncts/f2001d85/lib/layout/breadcrumbs.css" type="text/css">
+		<script src="/jenkins/adjuncts/f2001d85/lib/layout/breadcrumbs.js" type="text/javascript"></script>
+		<div style="height: 26px;"></div>
+		<div class="top-sticker noedge" style="position: fixed; top: 40px; left: 0px;">
+			<div class="top-sticker-edge"></div>
+			<div class="top-sticker-inner">
+				<div id="right-top-nav"></div>
+				<ul id="breadcrumbs">
+					<li class="item"><a class="model-link inside breadcrumbBarAnchor" href="{{baseurl}}">Jenkins</a></li>
+					<li class="children" href="{{baseurl}}"></li>
+					<li class="item"><a class="model-link inside breadcrumbBarAnchor" href="{{baseurl}}job/{{job}}/">{{job}}</a></li>
+					<li class="children" href="{{baseurl}}job/testproject/"></li>
+				</ul>
+				<div id="breadcrumb-menu-target"></div>
+			</div>
+		</div>
+	</div>
+</div>
 
-	<form>		
-		<div class="uiTest">
+<link rel="stylesheet" type="text/css" href="{{baseurl}}static/1e091584/css/style.css" />
+<link rel="stylesheet" type="text/css" href="{{baseurl}}static/1e091584/css/color.css" />
+<link rel="stylesheet" type="text/css" href="{{baseurl}}static/1e091584/css/responsive-grid.css" />
+<link rel="stylesheet" href="css/index.css" />
+<link rel="stylesheet" href="css/colorbox.css" />
+<link rel="stylesheet" href="css/jquery.modal.css" />
 
-		    <div class="headerUiTest">
-				<div style="font-size:10px;font-weight:normal;float:right;margin-right:20px;">
-					<div style="text-align:right;margin-top:10px;">
-						Execution history				
-					</div>
-					
-					<a href="" ng-click="historyPrevious()">Previous</a>
-					<a href="" ng-click="historyNext()">Next</a>
-				</div>
-				<h2 class="titulo" style="display:block;">
-					UI Test Capture
-				</h2>
+<form>
+	<div class="uiTest">
+		<div class="headerUiTest">
+			<div style="font-size: 10px; font-weight: normal; float: right; margin-right: 20px;">
+				<div style="text-align: right; margin-top: 10px;">Execution history</div>
+				<a href="" ng-click="historyPrevious()">Previous</a> 
+				<a href="" ng-click="historyNext()">Next</a>
+			</div>
+			<h2 class="titulo" style="display: block;">UI Test Capture</h2>
 
-				<h3 class="titulo" style="display:block;">
-					<span ng-bind="job"></span> #<span>{{exec}}</span>
-					<span>
-						<span ng-if="runningStatus" style="width:25px;height:25px;">
-							<img src="images/loading.gif" style="width:18px;height:auto;margin-top:-4px;margin:0 10px 0 10px;" />
-						</span>
-						<span ng-if="!runningStatus" style="width:25px;height:25px;">
-							<a href="" ng-click="runJob()" class="reexec"><img src="images/reexec.png" style="margin-top:-4px;margin:0 10px 0 10px;"/></a>
-						</span>
+			<h3 class="titulo" style="display: block;">
+				<span ng-bind="job"></span> #<span>{{exec}}</span>
+				<span>
+					<span ng-if="runningStatus" style="width: 25px; height: 25px;"> 
+						<img src="images/loading.gif" style="width: 18px; height: auto; margin-top: -4px; margin: 0 10px 0 10px;" />
+					</span> 
+					<span ng-if="!runningStatus" style="width: 25px; height: 25px;">
+						<a href="" ng-click="runJob()" class="reexec">
+						<img src="images/reexec.png" style="margin-top: -4px; margin: 0 10px 0 10px;" /></a>
 					</span>
-					<table>
-						<tr><td align="right">Passed: </td><td><span class="resultado passou" ng-bind="resume.passed"></span></td>
-						<td align="right">Failed: </td><td><span class="resultado falhou" ng-bind="resume.failed"></span></td>
-						<td align="right">Flaky: </td><td><span class="resultado flaky"  ng-bind="resume.flaky">0</span></td>
-						<td align="right">Know Issue: </td><td><span class="resultado flaky"  ng-bind="resume.knowissue">0</span></td>
-						<td align="right">Total: </td><td><span class="resultado total"  ng-bind="resume.total">0</span></td></tr>
-					</table>
-				</h3>
-				
-				<div style="width:50%;margin-left:10px;">
-					<div ng-if="showExecutionDescriptionStatus">
-						<textarea class="todo" ng-model="execDescription"></textarea>
-						<div class="description-commands">
-							<span class="description-status" id="execdescription-status"></span>
-							<a href="" style="color:#d3d3d3;font-size:9px;" ng-click="showExecutionDescription()">Cancel</a>
-							<input type="button" value="Save" ng-click="updateExecutionDescription(execDescription)" />
-						</div>
+				</span>
+				<table>
+					<tr>
+						<td align="right">Passed:</td>
+						<td><span class="resultado passou" ng-bind="resume.passed"></span></td>
+						<td align="right">Failed:</td>
+						<td><span class="resultado falhou" ng-bind="resume.failed"></span></td>
+						<td align="right">Flaky:</td>
+						<td><span class="resultado flaky" ng-bind="resume.flaky">0</span></td>
+						<td align="right">Know Issue:</td>
+						<td><span class="resultado flaky" ng-bind="resume.knowissue">0</span></td>
+						<td align="right">Total:</td>
+						<td><span class="resultado total" ng-bind="resume.total">0</span></td>
+					</tr>
+				</table>
+			</h3>
+			<div style="width: 50%; margin-left: 10px;">
+				<div ng-if="showExecutionDescriptionStatus">
+					<textarea class="todo" ng-model="execDescription"></textarea>
+					<div class="description-commands">
+						<span class="description-status" id="execdescription-status"></span>
+						<a href="" style="color: #d3d3d3; font-size: 9px;" ng-click="showExecutionDescription()">Cancel</a>
+						<input type="button" value="Save" ng-click="updateExecutionDescription(execDescription)" />
 					</div>
-					<div style="margin-left:8px;">
-						<span ng-if="execDescription!='' && !showExecutionDescriptionStatus">Execution description: {{execDescription}}</span>
-						<a href="" ng-if="execDescription=='' && !showExecutionDescriptionStatus" style="color:#d3d3d3;font-size:9px;" ng-click="showExecutionDescription()">Result description </a>
-						<a href="" style="color:#d3d3d3;font-size:9px;" ng-if="!showExecutionDescriptionStatus" ng-click="showExecutionDescription()">(edit)</a>
-					</div>
+				</div>
+				<div style="margin-left: 8px;">
+					<span ng-if="execDescription!='' && !showExecutionDescriptionStatus">Execution description: {{execDescription}}</span> 
+					<a href="" ng-if="execDescription=='' && !showExecutionDescriptionStatus" style="color: #d3d3d3; font-size: 9px;" ng-click="showExecutionDescription()">Result description </a> 
+					<a href="" style="color: #d3d3d3; font-size: 9px;" ng-if="!showExecutionDescriptionStatus" ng-click="showExecutionDescription()">(edit)</a>
 				</div>
 			</div>
-	
-			<div ng-if="resume.total>0">	
-				<div class="headerUiTest" ng-if="resume.passed>=1 || resume.failed>=1">
-					<h3 class="titulo" style="display:block;">
-						Test results
-					</h3>
-				</div>
-				<dl class="accordion" id="execucao">
-					<div class="containerTeste"  ng-repeat="item in stack | orderBy : 'behavior'">
-						<div ng-include="'resultItem.html'" ng-if="item.classificacao==''"></div>
-					</div>
-				</dl>
-				
-				<div class="headerUiTest" ng-if="resume.knowissue>=1">
-					<h3 class="titulo">
-						Quarantined tests by App Failure
-					</h3>
-				</div>
-				<dl class="accordion" id="dlFailApp">
-					<div class="containerTeste"  ng-repeat="item in stack | orderBy">
-						<div ng-include="'resultItem.html'" ng-if="item.classificacao=='app_fail'"></div>
-					</div>
-				</dl>
-		
-				<div class="headerUiTest" ng-if="resume.flaky>=1">
-					<h3 class="titulo">
-						Quarantined tests by Test Failure (Flaky Tests)
-					</h3>
-				</div>
-				<dl class="accordion" id="dlFailTest">
-					<div class="containerTeste"  ng-repeat="item in stack | orderBy : item.metodo">
-						<div ng-include="'resultItem.html'" ng-if="item.classificacao=='test_fail'"></div>
-					</div>
-				</dl>
-			</div>				
 		</div>
-	</form>
+
+		<div ng-if="resume.total>0">
+			<div class="headerUiTest" ng-if="resume.passed>=1 || resume.failed>=1">
+				<h3 class="titulo" style="display: block;">Test results</h3>
+			</div>
+			<dl class="accordion" id="execucao">
+				<div class="containerTeste" ng-repeat="item in stack | orderBy : 'behavior' | orderBy : 'metodo'">
+					<div ng-include="'resultItem.html'" ng-if="item.classificacao==''"></div>
+				</div>
+			</dl>
+			<div class="headerUiTest" ng-if="resume.knowissue>=1">
+				<h3 class="titulo">Quarantined tests by App Failure</h3>
+			</div>
+			<dl class="accordion" id="dlFailApp">
+				<div class="containerTeste" ng-repeat="item in stack | orderBy">
+					<div ng-include="'resultItem.html'" ng-if="item.classificacao=='app_fail'"></div>
+				</div>
+			</dl>
+			<div class="headerUiTest" ng-if="resume.flaky>=1">
+				<h3 class="titulo">Quarantined tests by Test Failure (Flaky Tests)</h3>
+			</div>
+			<dl class="accordion" id="dlFailTest">
+				<div class="containerTeste" ng-repeat="item in stack | orderBy : item.metodo">
+					<div ng-include="'resultItem.html'" ng-if="item.classificacao=='test_fail'"></div>
+				</div>
+			</dl>
+		</div>
+	</div>
+</form>
