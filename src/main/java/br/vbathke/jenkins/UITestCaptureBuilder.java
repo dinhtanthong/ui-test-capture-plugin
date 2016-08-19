@@ -156,16 +156,16 @@ public class UITestCaptureBuilder extends Builder{
 
 		Result result = new Result(job.getId(), exec.getId(), test.getTest());
 		result.setStatus(status);
-		System.out.println("imprimeindo o caminho caminho /workspace/target/surefire-reports/"+classe+ ".txt");
 		try {
-			//TODO: falha ao buscar no caminho java.io.FileNotFoundException: File 'C:\Users\victor.bathke\.jenkins\jobs\testjob\workspace\target\surefire-reports\test.java.funcionais.FA3.txt' does not exist
-			//Analisar
-			result.setStacktrace(FileUtils.readFileToString(new File(build.getProject().getRootDir().getCanonicalPath()+ "/workspace/target/surefire-reports/"+classe+ ".txt"), "UTF-8"));
-			
-		} catch (Exception e) {
-			System.out.println("FALHA ao imprimir o caminho /workspace/target/surefire-reports/"+classe+ ".txt");
-			result.setStacktrace("");
-			e.printStackTrace();
+			result.setStacktrace(FileUtils.readFileToString(new File(build.getProject().getLastBuild().getWorkspace().toString()+"/target/surefire-reports/"+classe+ ".txt")));
+		} catch (Exception e1) {
+			try {
+				result.setStacktrace(FileUtils.readFileToString(new File(build.getProject().getRootDir().getCanonicalPath()+ "/workspace/target/surefire-reports/"+classe+ ".txt")));
+			} catch (Exception e2) {
+				result.setStacktrace("");
+				e2.printStackTrace();				
+			}
+			e1.printStackTrace();
 		}
 		result.save();
 	}
