@@ -1,8 +1,5 @@
 package br.vbathke.model;
 
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import br.vbathke.helper.SqliteHelper;
@@ -12,8 +9,7 @@ public class Job {
 	private int id = 0;
 	private String name = "";
 	
-	public Job(){		
-	}
+	public Job(){}
 		
 	public Job(int id){
 		try {
@@ -31,10 +27,10 @@ public class Job {
 	}	
 	
 	public Job(String job){
+    	SqliteHelper conn = new SqliteHelper();
+    	JSONArray rs;
+    	setName(job);
 		try {
-	    	SqliteHelper conn = new SqliteHelper();
-	    	JSONArray rs;
-	    	setName(job);
 			rs = conn.query( "SELECT * FROM tb_job where name='"+getName()+"';" );
 			if(rs.size() > 0){
 				setId(rs.getJSONObject(0).getInt("id"));
@@ -78,9 +74,8 @@ public class Job {
     	String retorno = rs.toString();
 		if(!retorno.equals("")){
 			return retorno; 
-		}else{
-			return "[{}]";
 		}
+		return "[{}]";
 	}
 	
 	public String getAllExecutions() throws Exception{
@@ -89,9 +84,8 @@ public class Job {
     	String retorno = rs.toString();
 		if(!retorno.equals("")){
 			return retorno; 
-		}else{
-			return "[{}]";
 		}
+		return "[{}]";
 	}
 
 	public int getId() {
