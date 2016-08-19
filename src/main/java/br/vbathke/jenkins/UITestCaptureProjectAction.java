@@ -117,7 +117,6 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
 			ServletOutputStream out = response.getOutputStream();
 			out.write((historico).getBytes("UTF-8")); 
       	} catch (IOException e) {
-			System.out.println(e);
 		}
     }
     
@@ -128,7 +127,6 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
       	try {
 			response.getOutputStream().println("{\"message\":\"sucesso\"}");
       	} catch (IOException e) {
-			System.out.println(e);
 		}    	
     }
 
@@ -187,21 +185,23 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
     }
     
     public void doConsultarHistoricoExecSize(StaplerRequest request, StaplerResponse response) throws Exception{
-    	if(request.getParameter("job") != null && request.getParameter("exec") != null){
-	    	Job job = new Job(request.getParameter("job"));
-	    	int idJob = 1;
-	    	if(job.getId() > 0){
-	    		idJob = job.getId();
-	    	}
-	    	Execution exec = new Execution(request.getParameter("exec"), idJob);
-	      	try {
-	    		String retorno = Integer.toString(exec.consultarHistoricoExecSize());
+		String retorno="0";
+      	try {
+      		if(request.getParameter("job") != null && request.getParameter("exec") != null){
+      			String jobname = request.getParameter("job").trim();
+      			Job job = new Job(jobname);
+		    	int idJob = 1;
+		    	if(job.getId() > 0){
+		    		idJob = job.getId();
+		    	}
+		    	Execution exec = new Execution(request.getParameter("exec"), idJob);
+	    		retorno = ""+Integer.toString(exec.consultarHistoricoExecSize());
 	        	if(retorno.equals("")){
-	        		retorno="{\"size\":0}";
+	        		retorno="0";
 	    		}
-				response.getOutputStream().println("{\"size\":"+retorno+"}");
-	      	} catch (IOException e) {}
-    	}
+    		}
+      	} catch (Exception e) {}
+		response.getOutputStream().println("{\"size\":"+retorno+"}");
     }
     
     public void doGetExecutions(StaplerRequest request, StaplerResponse response) throws Exception{
