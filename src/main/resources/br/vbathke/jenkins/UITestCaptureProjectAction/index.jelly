@@ -1,4 +1,7 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:i="jelly:fmt" xmlns:x="jelly:xml">
+<st:contentType value="text/html;charset=UTF-8" />
+
 	<script>var doStream=true;</script>
 	<script>var resources='target/';</script>			
 	<base href="${it.getRootUrl()}plugin/ui-test-capture/" />
@@ -24,4 +27,4 @@
 	<script src="js/app.js" type="text/javascript"></script>
 	<script src="js/services/ReviewService.js" type="text/javascript"></script>
 	<script src="js/controllers/ReviewCtrl.js" type="text/javascript"></script>	
-</j:jelly>   
+</j:jelly>
