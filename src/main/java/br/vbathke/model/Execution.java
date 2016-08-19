@@ -41,9 +41,7 @@ public class Execution {
 	    	setIdJob(item.getInt("id_job"));
 	    	setDescription(item.getString("description"));
 	    	setDate(item.getString("date"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	public void save(){
