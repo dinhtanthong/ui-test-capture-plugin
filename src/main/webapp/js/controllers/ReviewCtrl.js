@@ -1,9 +1,15 @@
 app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $routeParams, $timeout, Review) {
 
+	//handling with jenkins develop mode
+	var urlComplement = '';
+	if(url.indexOf('/jenkins/job/') !== -1){
+		urlComplement='/jenkins';
+	}	
+	
 	$scope.url = url;
-	$scope.baseurl = baseurl;
-	$scope.urlPrefix = '/jenkins/job/'+job;
-	$scope.urlPrefixPlugin = '/jenkins/job/'+job+'/ui-test-capture';
+	$scope.baseurl = baseurl;	
+	$scope.urlPrefix = urlComplement+'/job/'+job;
+	$scope.urlPrefixPlugin = urlComplement+'/job/'+job+'/ui-test-capture';
 	$scope.execDescription="";
 	$scope.doAppend=false;
 	$scope.runningStatus=false;
@@ -195,7 +201,6 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 		$scope.stack={};
 	}
 	$scope.setExec=function(pExec){
-		console.log(pExec);
 		$scope.exec = pExec;
 	}
 	
