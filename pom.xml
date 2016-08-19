@@ -3,9 +3,9 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.599</version>
+		 <version>2.2</version>
 	</parent>
-
+	
 	<artifactId>ui-test-capture</artifactId>
 	<version>1.0.48-SNAPSHOT</version>
 	<packaging>hpi</packaging>
@@ -51,9 +51,6 @@
         <groupId>org.jenkins-ci.tools</groupId>
         <artifactId>maven-hpi-plugin</artifactId>
         <extensions>true</extensions>
-        <configuration>
-          <compatibleSinceVersion>1.29</compatibleSinceVersion>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -81,7 +78,7 @@
 	    <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.7.2</version>
+            <version>3.8.11.2</version>
         </dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
@@ -101,7 +98,7 @@
 		<dependency>
 		    <groupId>xml-apis</groupId>
 		    <artifactId>xml-apis</artifactId>
-		    <version>1.4.01</version>
+		    <version>2.0.2</version>
 		</dependency>
 	</dependencies>
 
@@ -118,4 +115,5 @@
 			<url>https://repo.jenkins-ci.org/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
+	
 </project>
