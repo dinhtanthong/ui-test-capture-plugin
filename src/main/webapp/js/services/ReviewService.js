@@ -1,5 +1,14 @@
 app.factory('Review', function($http) {  
 
+    var _updateJobConfig = function(job, xmlpath, evidencespath, prefix) {
+    	return $http({
+    	    method: 'POST',
+    	    url: prefix+'/ajaxUpdateJobConfig',
+    	    data: Object.toparams({job:job, xmlpath:xmlpath, evidencespath:evidencespath}),
+    	    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    	});    	    	
+    }
+
     var _consultarHistoricoExecSize = function(job, exec, prefix) {
     	return $http({
     	    method: 'POST',
@@ -58,6 +67,10 @@ app.factory('Review', function($http) {
         return $http.get(prefix+'/ajaxVerifyResults?job='+job+'&exec='+exec);
     }
 
+    var _getConfig = function(job, prefix) {
+        return $http.get(prefix+'/getConfig?job='+job);
+    }
+
     var _runJob = function(url) {
         return $http.get(url);
     }
@@ -102,6 +115,8 @@ app.factory('Review', function($http) {
     };    
     
     return {
+    	getConfig: _getConfig,
+    	updateJobConfig: _updateJobConfig,
     	allResults: _allResults,
     	lastResults: _lastResults,
     	updateTestResultDescription: _updateTestResultDescription,

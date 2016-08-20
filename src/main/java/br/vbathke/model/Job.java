@@ -8,6 +8,8 @@ public class Job {
 
 	private int id = 0;
 	private String name = "";
+	private String xmlPath = "";
+	private String evidencesPath = "";
 	
 	public Job(){}
 		
@@ -20,6 +22,8 @@ public class Job {
 			if(rs.getJSONObject(0).getInt("id") > 0){
 				setId(rs.getJSONObject(0).getInt("id"));
 				setName(rs.getJSONObject(0).getString("name"));
+				setXmlPath(rs.getJSONObject(0).getString("xmlpath"));
+				setEvidencesPath(rs.getJSONObject(0).getString("evidencespath"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -35,11 +39,15 @@ public class Job {
 			if(rs.size() > 0){
 				setId(rs.getJSONObject(0).getInt("id"));
 				setName(rs.getJSONObject(0).getString("name"));
+				setXmlPath(rs.getJSONObject(0).getString("xmlpath"));
+				setEvidencesPath(rs.getJSONObject(0).getString("evidencespath"));
 			}else{
 				save();
 				rs = conn.query( "SELECT * FROM tb_job where name='"+getName()+"';" );
 				setId(rs.getJSONObject(0).getInt("id"));
 				setName(rs.getJSONObject(0).getString("name"));
+				setXmlPath(rs.getJSONObject(0).getString("xmlpath"));
+				setEvidencesPath(rs.getJSONObject(0).getString("evidencespath"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,7 +68,9 @@ public class Job {
 			    }
 			}
 			if(job == 0){
-	            conn.update("INSERT INTO tb_job(name) VALUES('"+getName()+"');");
+	            conn.update("INSERT INTO tb_job(name, xmlpath, evidencespath) VALUES('"+getName()+"', 'target/surefire-reports/', 'target/screenshots/');");
+			}else{
+	            conn.update("UPDATE tb_job SET xmlpath='"+getXmlPath()+"', evidencespath='"+getEvidencesPath()+"' where id='"+getId()+"';");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,4 +114,31 @@ public class Job {
 		this.name = name;
 	}	
 
+	public String getXmlPath() {
+		if(!xmlPath.startsWith("/")){
+			xmlPath="/"+xmlPath;
+		}
+		if(!xmlPath.endsWith("/")){
+			xmlPath=xmlPath+"/";			
+		}
+		return xmlPath;
+	}
+
+	public void setXmlPath(String xmlPath) {
+		this.xmlPath = xmlPath;
+	}
+
+	public String getEvidencesPath() {
+		if(!evidencesPath.startsWith("/")){
+			evidencesPath="/"+evidencesPath;
+		}
+		if(!evidencesPath.endsWith("/")){
+			evidencesPath=evidencesPath+"/";			
+		}
+		return evidencesPath;
+	}
+
+	public void setEvidencesPath(String evidencesPath) {
+		this.evidencesPath = evidencesPath;
+	}
 }

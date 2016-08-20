@@ -101,11 +101,12 @@ public class UITestCaptureBuilder extends Builder{
 
 		@Override
 		public void run() {
+			Job job = new Job(build.getProject().getName());
 			while (build.isBuilding()) {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {}
-				persistNewTestResults(build, build.getProject().getLastBuild().getWorkspace().toString()+"/target/surefire-reports/");				
+				persistNewTestResults(build, (build.getProject().getLastBuild().getWorkspace().toString()).replace("\\", "/")+job.getXmlPath());
 			}
 		}
 
@@ -157,15 +158,14 @@ public class UITestCaptureBuilder extends Builder{
 		Result result = new Result(job.getId(), exec.getId(), test.getTest());
 		result.setStatus(status);
 		try {
-			result.setStacktrace(FileUtils.readFileToString(new File(build.getProject().getLastBuild().getWorkspace().toString()+"/target/surefire-reports/"+classe+ ".txt")));
+			result.setStacktrace(FileUtils.readFileToString(new File((build.getProject().getLastBuild().getWorkspace().toString()).replace("\\", "/")+job.getXmlPath()+classe+ ".txt")));
 		} catch (Exception e1) {
 			try {
-				result.setStacktrace(FileUtils.readFileToString(new File(build.getProject().getRootDir().getCanonicalPath()+ "/workspace/target/surefire-reports/"+classe+ ".txt")));
+				result.setStacktrace(FileUtils.readFileToString(new File((build.getProject().getRootDir().getCanonicalPath()).replace("\\", "/")+"/workspace/"+job.getXmlPath()+classe+ ".txt")));
 			} catch (Exception e2) {
 				result.setStacktrace("");
 				e2.printStackTrace();				
 			}
-			e1.printStackTrace();
 		}
 		result.save();
 	}

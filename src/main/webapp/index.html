@@ -1,25 +1,45 @@
-<div id="page-head">
-	<div id="breadcrumbBar">
-		<div class="top-sticker noedge" style="">
-			<div class="top-sticker-edge"></div>
-			<div class="top-sticker-inner">
-				<div id="right-top-nav" style="float:right;">
-					<a class="model-link inside breadcrumbBarAnchor" href="{{baseurl}}">Jenkins</a> &gt;
-					<a class="model-link inside breadcrumbBarAnchor" href="{{baseurl}}job/{{job}}/">{{job}}</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
 <link rel="stylesheet" type="text/css" href="css/style.css" />
 <link rel="stylesheet" type="text/css" href="css/color.css" />
 <link rel="stylesheet" type="text/css" href="css/responsive-grid.css" />
 <link rel="stylesheet" href="css/index.css" />
 <link rel="stylesheet" href="css/colorbox.css" />
 <link rel="stylesheet" href="css/jquery.modal.css" />
-
 <form>
+	<div id="page-head">
+		<div id="breadcrumbBar">
+			<div class="top-sticker noedge">
+				<div class="top-sticker-inner" style="float:right;">
+					<div id="right-top-nav" style="float:right;">
+						<a class="model-link inside breadcrumbBarAnchor" href="{{baseurl}}">Jenkins</a> &gt;
+						<a class="model-link inside breadcrumbBarAnchor" href="{{baseurl}}job/{{job}}/">{{job}}</a>
+						<br />
+						<br />
+						<a href="" ng-click="showJobConfig()"  ng-if="!showJobConfigStatus">Configure parameters</a>					
+					</div>
+					<div ng-if="showJobConfigStatus">
+						<table>
+							<tr>
+								<td align="right">XML Test Results Path:</td>
+								<td><input type="text" ng-model="config.xmlpath" style="width:260px;" /></td>
+							</tr>
+							<tr>
+								<td align="right">Screenshots Path:</td>
+								<td><input type="text" ng-model="config.evidencespath" style="width:260px;" /></td>
+							</tr>
+							<tr>
+								<td align="right" colspan="2">
+									<input type="button" value="Cancel" ng-click="showJobConfig()" />
+									<input type="button" value="Save" ng-click="updateJobConfig(config)" />
+								</td>
+							</tr>
+						</table>
+					</div>				
+				</div>
+			</div>
+		</div>
+	</div>
+
+
 	<div class="uiTest">
 		<div class="headerUiTest">
 			<h2 class="titulo" style="display: block;">UI Test Capture</h2>

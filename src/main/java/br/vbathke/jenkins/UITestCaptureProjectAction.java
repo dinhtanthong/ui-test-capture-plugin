@@ -104,6 +104,19 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
     public Object getUITestCaptureProjectAction(){
     	return UITestCaptureProjectAction.class;
     }
+
+    public void doAjaxUpdateJobConfig(StaplerRequest request, StaplerResponse response) throws Exception {
+		ServletOutputStream out = response.getOutputStream();
+      	try {
+	    	Job job = new Job(request.getParameter("job"));
+	    	job.setXmlPath(request.getParameter("xmlpath"));
+	    	job.setEvidencesPath(request.getParameter("evidencespath"));
+	    	job.save();
+			out.write(("{\"status\":\"success\"}").getBytes("UTF-8")); 
+      	} catch (IOException e) {
+			out.write(("{\"status\":\"fail\"}").getBytes("UTF-8")); 
+		}
+    }
     
     public void doAjaxQueryHistorico(StaplerRequest request, StaplerResponse response) throws Exception {
     	int streamsize = 0;
@@ -225,4 +238,13 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
 			response.getOutputStream().println(retorno);
       	} catch (IOException e) {}
     }    
+
+    public void doGetConfig(StaplerRequest request, StaplerResponse response) throws Exception{
+  	    try {
+  	    	Job job = new Job(request.getParameter("job"));
+			response.getOutputStream().println("{\"xmlpath\":\""+job.getXmlPath()+"\",\"evidencespath\":\""+job.getEvidencesPath()+"\"}");
+  	    } catch (Exception e) {
+			response.getOutputStream().println("{}");
+  	    }
+    }
 }

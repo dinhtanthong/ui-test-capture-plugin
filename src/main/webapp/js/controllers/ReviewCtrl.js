@@ -11,6 +11,8 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 	$scope.urlPrefix = urlComplement+'/job/'+job;
 	$scope.urlPrefixPlugin = urlComplement+'/job/'+job+'/ui-test-capture';
 	$scope.execDescription="";
+	$scope.xmlpath="";
+	$scope.evidencespath="";
 	$scope.doAppend=false;
 	$scope.runningStatus=false;
 	$scope.streamSize=0;
@@ -19,7 +21,8 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 	$scope.stack={};
 	$scope.executionHistoryLast10={};
 	$scope.executionHistory={};
-
+	$scope.config = {};
+	
 	$scope.loop=function(){
 		Review.queryLastBuild($scope.urlPrefix).success(function(data) {	//Controle de execução do Job
 			$scope.runningStatus=true;
@@ -44,6 +47,15 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 			$scope.updateStack();
 		});
 	}
+
+	$scope.showJobConfigStatus=false;
+	$scope.showJobConfig=function(){
+		if($scope.showJobConfigStatus){
+			$scope.showJobConfigStatus=false;
+		}else{
+			$scope.showJobConfigStatus=true;
+		}
+	}
 	
 	$scope.showLast10ExecStatus=false;
 	$scope.showLast10Exec=function(){
@@ -61,6 +73,13 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 			$scope.showTestResultDescriptionStatus=true;
 	}
 
+	$scope.updateJobConfig=function(pConfig){
+		Review.updateJobConfig($scope.job,pConfig.xmlpath,pConfig.evidencespath, $scope.urlPrefixPlugin).success(function(data) {
+			$scope.showJobConfig();
+			$scope.config = $scope.getConfig();
+		});
+	}
+	
 	$scope.updateTestResultDescription=function(test, description){
 		Review.updateTestResultDescription($scope.job, test, $scope.exec, description, $scope.urlPrefixPlugin).success(function(data) {
 			$scope.showTestResultDescription();			
@@ -159,6 +178,14 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 		});
 	}
 	
+	$scope.getConfig=function(){
+		Review.getConfig($scope.job, $scope.urlPrefixPlugin).success(function(data) {
+			$scope.config = data;
+			console.log(data);
+		});
+	}
+	
+	
 	$scope.historyPrevious=function(){
 		if($scope.historyPosition <= $scope.executionHistory.length){
 			$scope.historyPosition++;
@@ -209,6 +236,7 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 	$scope.doStream=doStream;
 	$scope.exec=execParam;
 	$scope.resetResume();
+	$scope.config = $scope.getConfig();
 	
 	//Loop 'do while' forever
 	$scope.loop();
