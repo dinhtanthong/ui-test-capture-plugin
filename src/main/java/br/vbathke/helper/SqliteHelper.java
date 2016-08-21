@@ -100,22 +100,22 @@ public class SqliteHelper {
     	if(c == null){
         	Class.forName("org.sqlite.JDBC");
         	try{
-    			c = DriverManager.getConnection("jdbc:sqlite:"+Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest.sqlite");
+    			c = DriverManager.getConnection("jdbc:sqlite:"+(Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest.sqlite");
     			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
         	}catch(Exception e1){
-    			c = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitestdev.sqlite");
+        		c = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitestdev.sqlite");
     			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
         	}
         	verifyDatabaseVersionMigration();
         }
         return c;
     }
-    
+
     public static Connection getConnNewDb() throws Exception {
     	if(cNewDb == null){
         	Class.forName("org.sqlite.JDBC");
         	try{
-        		cNewDb = DriverManager.getConnection("jdbc:sqlite:"+Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest-model.sqlite");
+        		cNewDb = DriverManager.getConnection("jdbc:sqlite:"+(Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest-model.sqlite");
         		cNewDb.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
         	}catch(Exception e1){
         		cNewDb = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitest-model.sqlite");
@@ -127,23 +127,53 @@ public class SqliteHelper {
     
     
     public static void verifyDatabaseVersionMigration() throws Exception{
-    	File fprodModelDb = new File(Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest-model.sqlite");
-    	
-    	//se o arquivo modelo, realizar procedimento de exportação
-    	if(fprodModelDb.exists() && !fprodModelDb.isDirectory()){ 
-    		System.out.println("################################");
-    		System.out.println("ATR-Database migration initiated");
+    	//1. VERIFICANDO A EXISTÊNCIA DO DB-MODELO, disponibilizado após o deploy
+    	File fprodModelDb = new File((Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest-model.sqlite");
 
-    		System.out.println("ATR-Exporting data...");
+    	//2. SE O DB-MODELO EXISTE, EXPORTAR DADOS E REMOVER O DB-MODELO
+    	if(fprodModelDb.exists() && !fprodModelDb.isDirectory()){ 
+    		//3. BUFFERS
     		StringBuffer data_tb_job =  new StringBuffer("");
     		StringBuffer data_tb_test =  new StringBuffer("");
     		StringBuffer data_tb_exec =  new StringBuffer("");
     		StringBuffer data_tb_result =  new StringBuffer("");
     		StringBuffer data_sqlite_sequence =  new StringBuffer("");
     		
+            SimpleDateFormat formatas = new SimpleDateFormat("yyyyMMdd-HHmmSS");
+            String databkp = formatas.format(new Date());
+    		try{
+    			//5. BACKUP DO BANCO EXISTENTE, CRIANDO O NOVO NOME DE ARQUIVO
+    			File fprodCurrentDbBkp = new File((Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest-bkp-"+databkp+".sqlite");
+
+    			//RENOMEANDO O uitest.sqlite PARA uitest-bkp-[data].sqlite
+    			File fprodCurrentDb = new File((Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest.sqlite");
+    			FileUtils.copyFile(fprodCurrentDb, fprodCurrentDbBkp);
+    			fprodCurrentDb.delete();
+    		}catch(Exception e){}
+
+    		try{
+	    		try {
+	    			File fprodCurrentDb = new File((Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest.sqlite");
+	    			FileUtils.copyFile(fprodModelDb, fprodCurrentDb);
+	    		} catch (IOException e) {
+	    		    e.printStackTrace();
+	    		}		    		
+    		}catch(Exception e){
+    		}
+    		
             try{
+            	//4. EXTRAÇÃO DE DADOS
             	try{
-	    			ResultSet rs0 = getConn().createStatement().executeQuery( "SELECT * FROM sqlite_sequence");
+            		/*
+            		System.out.println("ATR-Extracting DB data from "+(Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/"+"uitest-bkp-"+databkp+".sqlite");
+                	Class.forName("org.sqlite.JDBC");
+        			Connection cbkp = DriverManager.getConnection("jdbc:sqlite:"+(Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/"+"uitest-bkp-"+databkp+".sqlite");
+        			cbkp.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
+            		
+	    			ResultSet rs0 = cbkp.createStatement().executeQuery( "SELECT * FROM sqlite_sequence");
+	    			cbkp.close();
+	    			*/
+	    			/*
 	    			while (rs0.next()) {
 	    			     String name = "";
 	    			     int seq = 0;
@@ -158,9 +188,14 @@ public class SqliteHelper {
 	    			while (rs1.next()) {
 	    			     int id = 0;
 	    			     String name = "";
+	    			     String xmlpath = "";
+	    			     String evidencespath = "";
 	    			     try{id = rs1.getInt("id");}catch(Exception e){}
 	    			     try{name = rs1.getString("name");}catch(Exception e){}
-	    			     data_tb_job.append("insert into tb_job(id,name) values('"+id+"','"+name+"');\n");
+	    			     try{id = rs1.getInt("id");}catch(Exception e){}
+	    			     try{xmlpath = rs1.getString("xmlpath");}catch(Exception e){}
+	    			     try{evidencespath = rs1.getString("evidencespath");}catch(Exception e){}
+	    			     data_tb_job.append("insert into tb_job(id,name,xmlpath,evidencespath) values('"+id+"','"+name+"','"+xmlpath+"','"+evidencespath+"');\n");
 	    			}
 	    			rs1.close();
 	    			getConn().createStatement().close();
@@ -170,17 +205,17 @@ public class SqliteHelper {
 	    			     int id = 0;
 	    			     int id_job = 0;
 	    			     String test = "";
+	    			     String behavior = "";
 	    			     String test_class = "";
 	    			     String status = "";
 	    			     String status_description = "";
-	    			     String behavior = "";
 	    			     try{id = rs2.getInt("id");}catch(Exception e){}
 	    			     try{id_job = rs2.getInt("id_job");}catch(Exception e){}
 	    			     try{test = rs2.getString("test");}catch(Exception e){}
+	    			     try{behavior = rs2.getString("behavior");}catch(Exception e){}
 	    			     try{test_class = rs2.getString("test_class");}catch(Exception e){}
 	    			     try{status = rs2.getString("status");}catch(Exception e){}
 	    			     try{status_description = rs2.getString("status_description");}catch(Exception e){}
-	    			     try{behavior = rs2.getString("behavior");}catch(Exception e){}
 	    			     data_tb_test.append("insert into tb_test(id,id_job, test, behavior, test_class, status, status_description) values('"+id+"','"+id_job+"','"+test+"','"+behavior+"','"+test_class+"','"+status+"','"+status_description+"');\n");
 	    			}
 	    			rs2.close();
@@ -209,17 +244,19 @@ public class SqliteHelper {
 	    			     String status = "";
 	    			     String description = "";
 	    			     String stacktrace = "";
+	    			     String date = "";
 	    			     try{id_job = rs4.getInt("id_job");}catch(Exception e){}
 	    			     try{id_exec = rs4.getInt("id_exec");}catch(Exception e){}
 	    			     try{test = rs4.getString("test");}catch(Exception e){}
 	    			     try{status = rs4.getString("status");}catch(Exception e){}
 	    			     try{description = rs4.getString("description");}catch(Exception e){}
 	    			     try{stacktrace = rs4.getString("stacktrace");}catch(Exception e){}
-	    			     data_tb_result.append("insert into tb_result(id_job,id_exec, test, status, description, stacktrace) values('"+id_job+"','"+id_exec+"','"+test+"','"+status+"','"+description+"','"+stacktrace+"');\n");
+	    			     try{date = rs4.getString("date");}catch(Exception e){}
+	    			     data_tb_result.append("insert into tb_result(id_job,id_exec, test, status, description, stacktrace, date) values('"+id_job+"','"+id_exec+"','"+test+"','"+status+"','"+description+"','"+stacktrace+"','"+date+"');\n");
 	    			}
 	    			rs4.close();
 	    			getConn().createStatement().close();
-
+	    			
 		    		try{
 			            Statement stmt = getConnNewDb().createStatement();
 			            stmt.executeUpdate(data_sqlite_sequence.toString());
@@ -228,64 +265,36 @@ public class SqliteHelper {
 			    	    stmt.executeUpdate(data_tb_exec.toString());
 			    	    stmt.executeUpdate(data_tb_result.toString());
 			    		stmt.close();
+		    			cNewDb.close();
 		    		}catch(Exception e){
-			    		System.out.println("ATR-Fail executing migration queries!");	    			
+			    		System.out.println("ATR-ERROR-Fail executing migration queries!");	    			
 		    		}
-		    		c.close();
-		    		cNewDb.close();
+					*/
+	    			c.close();
             	} catch (Exception e) {
-		    		System.out.println("ATR-The previus db was not avaiable!");	    			
+            		e.printStackTrace();
 	    		}
-	    		
-	    		System.out.println("ATR-Backing-up existing db...");
-	    		try{
+            	
+        		//Reinstanciando a base
+            	try{
+        			c = DriverManager.getConnection("jdbc:sqlite:"+(Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest.sqlite");
+        			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
+            	}catch(Exception e1){
+        			c = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitestdev.sqlite");
+        			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
+            	}
 
-	                SimpleDateFormat formatas = new SimpleDateFormat("yyyyMMdd-HHmmSS");
-	                String data = formatas.format(new Date());
-	    			File fprodCurrentDbBkp = new File(Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest-bkp-"+data+".sqlite");
-
-	    			File fprodCurrentDb = new File(Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest.sqlite");
-	    			FileUtils.copyFile(fprodCurrentDb, fprodCurrentDbBkp);
-	    			fprodCurrentDb.delete();
-	    		}catch(Exception e){
-		    		System.out.println("ATR-Fail deleting DB!");	    			
-	    		}
-	    		
-	    		System.out.println("ATR-Rename new db...");
-	    		try{
-		    		try {
-		    			File fprodCurrentDb = new File(Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest.sqlite");
-		    			FileUtils.copyFile(fprodModelDb, fprodCurrentDb);
-		    		} catch (IOException e) {
-		    		    e.printStackTrace();
-		    		}		    		
-	    		}catch(Exception e){
-		    		System.out.println("ATR-Fail renaming DB!");	    			
-	    		}
-	    		
 	    		try{
 	    			fprodModelDb.delete();
 	    		} catch (Exception e) {
 	    		    e.printStackTrace();
 	    		}		    		
-	    		
-	    		System.out.println("ATR-Migration successful!");
+	    		//System.out.println("ATR-Migration successful!");
+            	
             }catch(Exception e){
-	    		System.out.println("ATR-Migration failed!");	    			
             }
-
-    		//Reinstanciando a base
-        	try{
-    			c = DriverManager.getConnection("jdbc:sqlite:"+Jenkins.getInstance().getRootDir()+"/plugins/ui-test-capture/uitest.sqlite");
-    			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
-        	}catch(Exception e1){
-    			c = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitestdev.sqlite");
-    			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
-        	}
-    		System.out.println("################################");
     		
     	}else{
-    		System.out.println("ATR-Database still updated");    		
     	}
     }
 
