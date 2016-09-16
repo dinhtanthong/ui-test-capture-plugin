@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		 <version>2.2</version>
+		 <version>2.3</version>
 	</parent>
 	
 	<artifactId>ui-test-capture</artifactId>
@@ -18,7 +18,7 @@
 		<connection>scm:git:ssh://github.com/jenkinsci/ui-test-capture-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/ui-test-capture-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/ui-test-capture-plugin</url>
-    <tag>ui-test-capture-1.0.42</tag>
+    <tag>ui-test-capture-1.1.0</tag-->
   </scm>
 	<properties>
     	<jenkins.version>2.7.2</jenkins.version>
