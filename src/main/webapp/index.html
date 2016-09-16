@@ -79,7 +79,7 @@
 			</div>
 
 			<h3 class="titulo" style="display: block;">
-				<span ng-bind="job"></span> #<span>{{exec}}</span>
+				<span ng-bind="job"></span> #<span>{{exec}} <span ng-if="execDate">({{execDate}})</span></span>
 				<span>
 					<span ng-if="runningStatus" style="width: 25px; height: 25px;"> 
 						<img src="images/loading.gif" style="width: 18px; height: auto; margin-top: -4px; margin: 0 10px 0 10px;" />

@@ -3,6 +3,7 @@ package br.vbathke.model;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import br.vbathke.helper.SqliteHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Job {
 
@@ -13,6 +14,7 @@ public class Job {
 	
 	public Job(){}
 		
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
 	public Job(int id){
 		try {
 	    	SqliteHelper conn = new SqliteHelper();
@@ -30,6 +32,7 @@ public class Job {
 		}
 	}	
 	
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
 	public Job(String job){
     	SqliteHelper conn = new SqliteHelper();
     	JSONArray rs;
@@ -54,6 +57,7 @@ public class Job {
 		}
 	}
 	
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
 	public void save(){
 		try {
 	    	SqliteHelper conn = new SqliteHelper();
@@ -77,7 +81,7 @@ public class Job {
 		}
 	}
 	
-
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
 	public String getExecutions() throws Exception{
     	SqliteHelper conn = new SqliteHelper();
     	JSONArray rs = conn.query( "select * from tb_exec where id_job='"+getId()+"' order by date desc limit 0,10");
@@ -88,6 +92,7 @@ public class Job {
 		return "[{}]";
 	}
 	
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
 	public String getAllExecutions() throws Exception{
     	SqliteHelper conn = new SqliteHelper();
     	JSONArray rs = conn.query( "select * from tb_exec where id_job='"+getId()+"' order by id desc");

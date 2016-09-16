@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import br.vbathke.helper.SqliteHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Result {
 
@@ -21,6 +22,7 @@ public class Result {
 	public Result(){		
 	}
 		
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
 	public Result(int pIdJob, int pIdExec, String pTest){
 		try {
 			this.setIdJob(pIdJob);
@@ -41,12 +43,13 @@ public class Result {
 				    setDate(rs.getJSONObject(0).getString("date"));
 			    }
 			}
-		    
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally{
 		}
 	}
 	
+	@SuppressFBWarnings({"SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE","OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE"})
 	public void save(){
         Statement stmt = null;
 		try {
@@ -70,6 +73,7 @@ public class Result {
 				stmt.close();
 			}
 		} catch (Exception e) {
+			stmt = null;
 			e.printStackTrace();
 		}
 	}

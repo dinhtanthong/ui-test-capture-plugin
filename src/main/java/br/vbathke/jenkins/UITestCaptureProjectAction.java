@@ -44,8 +44,6 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-
-import br.vbathke.helper.JsonParseSingleQuote;
 import br.vbathke.model.Execution;
 import br.vbathke.model.Job;
 import br.vbathke.model.Result;
@@ -86,7 +84,11 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
     }
     
     public String getVersaoAtual(){
-    	return ""+project.getLastBuild().getNumber();
+    	String version = "";
+    	try{
+    		version= ""+project.getLastBuild().getNumber();
+    	}catch(Exception e){}
+    	return version;
     }
     
     public String getBuildArtifacts(){
@@ -129,7 +131,8 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
       	try {
 			ServletOutputStream out = response.getOutputStream();
 			out.write((historico).getBytes("UTF-8")); 
-      	} catch (IOException e) {
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
 		}
     }
     
@@ -139,8 +142,9 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
     	test.save();
       	try {
 			response.getOutputStream().println("{\"message\":\"sucesso\"}");
-      	} catch (IOException e) {
-		}    	
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
+		}
     }
 
     public void doAjaxUpdateQuarantineDescription(StaplerRequest request, StaplerResponse response) {
@@ -149,7 +153,9 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
     	test.save();
       	try {
 			response.getOutputStream().println("{\"message\":\"sucesso\"}");
-      	} catch (IOException e) {}    	
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
+		}
     }
     
     public void doAjaxUpdateQuarantineResult(StaplerRequest request, StaplerResponse response) {
@@ -159,7 +165,9 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
     	result.save();
       	try {
 			response.getOutputStream().println("{\"message\":\"sucesso\"}");
-      	} catch (IOException e) {}    	
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
+		}
     }
     
     public void doAjaxUpdateQuarantineBehavior(StaplerRequest request, StaplerResponse response) {
@@ -168,7 +176,9 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
     	test.save();
       	try {
 			response.getOutputStream().println("{\"message\":\"sucesso\"}");
-      	} catch (IOException e) {}    	
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
+		}
     }
     
     public void doAjaxUpdateExecDescription(StaplerRequest request, StaplerResponse response) throws Exception{
@@ -182,7 +192,9 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
     	exec.save();
       	try {
 			response.getOutputStream().println("{\"message\":\"sucesso\"}");
-      	} catch (IOException e) {}    	
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
+		}
     }    
     
     public void doConsultarQuadro(StaplerRequest request, StaplerResponse response) throws Exception{
@@ -194,7 +206,9 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
         		retorno="[{}]";
     		}
 			response.getOutputStream().println(retorno);
-      	} catch (IOException e) {}
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
+		}
     }
     
     public void doConsultarHistoricoExecSize(StaplerRequest request, StaplerResponse response) throws Exception{
@@ -213,7 +227,9 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
 	        		retorno="0";
 	    		}
     		}
-      	} catch (Exception e) {}
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
+		}
 		response.getOutputStream().println("{\"size\":"+retorno+"}");
     }
     
@@ -225,7 +241,9 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
         		retorno="[{}]";
     		}
 			response.getOutputStream().println(retorno);
-      	} catch (IOException e) {}
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
+		}
     }
 
     public void doGetAllExecutions(StaplerRequest request, StaplerResponse response) throws Exception{
@@ -236,7 +254,9 @@ public class UITestCaptureProjectAction implements ProminentProjectAction{
         		retorno="[{}]";
     		}
 			response.getOutputStream().println(retorno);
-      	} catch (IOException e) {}
+      	} catch (Exception e) {
+      		System.out.println("Resquest failed");
+		}
     }    
 
     public void doGetConfig(StaplerRequest request, StaplerResponse response) throws Exception{

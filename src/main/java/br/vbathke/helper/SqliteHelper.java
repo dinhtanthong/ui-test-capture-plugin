@@ -22,11 +22,13 @@ import org.apache.commons.io.FileUtils;
 
 import com.thoughtworks.xstream.io.json.JsonWriter;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class SqliteHelper {
 	private static Connection c = null;
 	private static Connection cNewDb = null;
-	public Statement stmt = null;
-	public static boolean runReady = true;
+	private Statement stmt = null;
+	private static boolean runReady = true;
 	
 	private void waitRunStart(){
 		int semaforo = 0;
@@ -96,6 +98,7 @@ public class SqliteHelper {
 		return rs;
 	}
 	
+	@SuppressFBWarnings("LI_LAZY_INIT_UPDATE_STATIC")
     public static Connection getConn()  throws Exception {
     	if(c == null){
         	Class.forName("org.sqlite.JDBC");
@@ -106,196 +109,7 @@ public class SqliteHelper {
         		c = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitestdev.sqlite");
     			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
         	}
-        	verifyDatabaseVersionMigration();
         }
         return c;
     }
-
-    public static Connection getConnNewDb() throws Exception {
-    	if(cNewDb == null){
-        	Class.forName("org.sqlite.JDBC");
-        	try{
-        		cNewDb = DriverManager.getConnection("jdbc:sqlite:"+(Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest-model.sqlite");
-        		cNewDb.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
-        	}catch(Exception e1){
-        		cNewDb = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitest-model.sqlite");
-        		cNewDb.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
-        	}
-        }
-        return cNewDb;
-    }
-    
-    
-    public static void verifyDatabaseVersionMigration() throws Exception{
-    	//1. VERIFICANDO A EXISTÊNCIA DO DB-MODELO, disponibilizado após o deploy
-    	File fprodModelDb = new File((Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest-model.sqlite");
-
-    	//2. SE O DB-MODELO EXISTE, EXPORTAR DADOS E REMOVER O DB-MODELO
-    	if(fprodModelDb.exists() && !fprodModelDb.isDirectory()){ 
-    		//3. BUFFERS
-    		StringBuffer data_tb_job =  new StringBuffer("");
-    		StringBuffer data_tb_test =  new StringBuffer("");
-    		StringBuffer data_tb_exec =  new StringBuffer("");
-    		StringBuffer data_tb_result =  new StringBuffer("");
-    		StringBuffer data_sqlite_sequence =  new StringBuffer("");
-    		
-            SimpleDateFormat formatas = new SimpleDateFormat("yyyyMMdd-HHmmSS");
-            String databkp = formatas.format(new Date());
-    		try{
-    			//5. BACKUP DO BANCO EXISTENTE, CRIANDO O NOVO NOME DE ARQUIVO
-    			File fprodCurrentDbBkp = new File((Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest-bkp-"+databkp+".sqlite");
-
-    			//RENOMEANDO O uitest.sqlite PARA uitest-bkp-[data].sqlite
-    			File fprodCurrentDb = new File((Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest.sqlite");
-    			FileUtils.copyFile(fprodCurrentDb, fprodCurrentDbBkp);
-    			fprodCurrentDb.delete();
-    		}catch(Exception e){}
-
-    		try{
-	    		try {
-	    			File fprodCurrentDb = new File((Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest.sqlite");
-	    			FileUtils.copyFile(fprodModelDb, fprodCurrentDb);
-	    		} catch (IOException e) {
-	    		    e.printStackTrace();
-	    		}		    		
-    		}catch(Exception e){
-    		}
-    		
-            try{
-            	//4. EXTRAÇÃO DE DADOS
-            	try{
-            		/*
-            		System.out.println("ATR-Extracting DB data from "+(Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/"+"uitest-bkp-"+databkp+".sqlite");
-                	Class.forName("org.sqlite.JDBC");
-        			Connection cbkp = DriverManager.getConnection("jdbc:sqlite:"+(Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/"+"uitest-bkp-"+databkp+".sqlite");
-        			cbkp.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
-            		
-	    			ResultSet rs0 = cbkp.createStatement().executeQuery( "SELECT * FROM sqlite_sequence");
-	    			cbkp.close();
-	    			*/
-	    			/*
-	    			while (rs0.next()) {
-	    			     String name = "";
-	    			     int seq = 0;
-	    			     try{name = rs0.getString("name");}catch(Exception e){}
-	    			     try{seq = rs0.getInt("seq");}catch(Exception e){}
-	    			     data_sqlite_sequence.append("insert into sqlite_sequence(name, seq) values('"+name+"','"+seq+"');\n");
-	    			}
-	    			rs0.close();
-	    			getConn().createStatement().close();
-	            	
-	    	        ResultSet rs1 = getConn().createStatement().executeQuery( "SELECT * FROM tb_job");
-	    			while (rs1.next()) {
-	    			     int id = 0;
-	    			     String name = "";
-	    			     String xmlpath = "";
-	    			     String evidencespath = "";
-	    			     try{id = rs1.getInt("id");}catch(Exception e){}
-	    			     try{name = rs1.getString("name");}catch(Exception e){}
-	    			     try{id = rs1.getInt("id");}catch(Exception e){}
-	    			     try{xmlpath = rs1.getString("xmlpath");}catch(Exception e){}
-	    			     try{evidencespath = rs1.getString("evidencespath");}catch(Exception e){}
-	    			     data_tb_job.append("insert into tb_job(id,name,xmlpath,evidencespath) values('"+id+"','"+name+"','"+xmlpath+"','"+evidencespath+"');\n");
-	    			}
-	    			rs1.close();
-	    			getConn().createStatement().close();
-	
-	    			ResultSet rs2 = getConn().createStatement().executeQuery( "SELECT * FROM tb_test");
-	    			while (rs2.next()) {
-	    			     int id = 0;
-	    			     int id_job = 0;
-	    			     String test = "";
-	    			     String behavior = "";
-	    			     String test_class = "";
-	    			     String status = "";
-	    			     String status_description = "";
-	    			     try{id = rs2.getInt("id");}catch(Exception e){}
-	    			     try{id_job = rs2.getInt("id_job");}catch(Exception e){}
-	    			     try{test = rs2.getString("test");}catch(Exception e){}
-	    			     try{behavior = rs2.getString("behavior");}catch(Exception e){}
-	    			     try{test_class = rs2.getString("test_class");}catch(Exception e){}
-	    			     try{status = rs2.getString("status");}catch(Exception e){}
-	    			     try{status_description = rs2.getString("status_description");}catch(Exception e){}
-	    			     data_tb_test.append("insert into tb_test(id,id_job, test, behavior, test_class, status, status_description) values('"+id+"','"+id_job+"','"+test+"','"+behavior+"','"+test_class+"','"+status+"','"+status_description+"');\n");
-	    			}
-	    			rs2.close();
-	    			getConn().createStatement().close();
-	
-	    			ResultSet rs3 = getConn().createStatement().executeQuery( "SELECT * FROM tb_exec");
-	    			while (rs3.next()) {
-	    			     int id = 0;
-	    			     int id_job = 0;
-	    			     String description = "";
-	    			     String date = "";
-	    			     try{id = rs3.getInt("id");}catch(Exception e){}
-	    			     try{id_job = rs3.getInt("id_job");}catch(Exception e){}
-	    			     try{description = rs3.getString("description");}catch(Exception e){}
-	    			     try{date = rs3.getString("date");}catch(Exception e){}
-	    			     data_tb_exec.append("insert into tb_exec(id, id_job, description, date) values('"+id+"','"+id_job+"','"+description+"','"+date+"');\n");
-	    			}
-	    			rs3.close();
-	    			getConn().createStatement().close();
-	
-	    			ResultSet rs4 = getConn().createStatement().executeQuery( "SELECT * FROM tb_result");
-	    			while (rs4.next()) {
-	    			     int id_job = 0;
-	    			     int id_exec = 0;
-	    			     String test = "";
-	    			     String status = "";
-	    			     String description = "";
-	    			     String stacktrace = "";
-	    			     String date = "";
-	    			     try{id_job = rs4.getInt("id_job");}catch(Exception e){}
-	    			     try{id_exec = rs4.getInt("id_exec");}catch(Exception e){}
-	    			     try{test = rs4.getString("test");}catch(Exception e){}
-	    			     try{status = rs4.getString("status");}catch(Exception e){}
-	    			     try{description = rs4.getString("description");}catch(Exception e){}
-	    			     try{stacktrace = rs4.getString("stacktrace");}catch(Exception e){}
-	    			     try{date = rs4.getString("date");}catch(Exception e){}
-	    			     data_tb_result.append("insert into tb_result(id_job,id_exec, test, status, description, stacktrace, date) values('"+id_job+"','"+id_exec+"','"+test+"','"+status+"','"+description+"','"+stacktrace+"','"+date+"');\n");
-	    			}
-	    			rs4.close();
-	    			getConn().createStatement().close();
-	    			
-		    		try{
-			            Statement stmt = getConnNewDb().createStatement();
-			            stmt.executeUpdate(data_sqlite_sequence.toString());
-			    	    stmt.executeUpdate(data_tb_job.toString());
-			    	    stmt.executeUpdate(data_tb_test.toString());
-			    	    stmt.executeUpdate(data_tb_exec.toString());
-			    	    stmt.executeUpdate(data_tb_result.toString());
-			    		stmt.close();
-		    			cNewDb.close();
-		    		}catch(Exception e){
-			    		System.out.println("ATR-ERROR-Fail executing migration queries!");	    			
-		    		}
-					*/
-	    			c.close();
-            	} catch (Exception e) {
-            		e.printStackTrace();
-	    		}
-            	
-        		//Reinstanciando a base
-            	try{
-        			c = DriverManager.getConnection("jdbc:sqlite:"+(Jenkins.getInstance().getRootDir().toString()).replace("\\", "/")+"/plugins/ui-test-capture/uitest.sqlite");
-        			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
-            	}catch(Exception e1){
-        			c = DriverManager.getConnection("jdbc:sqlite:src/main/webapp/uitestdev.sqlite");
-        			c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);        		
-            	}
-
-	    		try{
-	    			fprodModelDb.delete();
-	    		} catch (Exception e) {
-	    		    e.printStackTrace();
-	    		}		    		
-	    		//System.out.println("ATR-Migration successful!");
-            	
-            }catch(Exception e){
-            }
-    		
-    	}else{
-    	}
-    }
-
 }

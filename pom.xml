@@ -21,6 +21,7 @@
     <tag>ui-test-capture-1.0.42</tag>
   </scm>
 	<properties>
+    	<jenkins.version>2.7.2</jenkins.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>	
 	<developers>

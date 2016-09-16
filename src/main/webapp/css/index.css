@@ -41,7 +41,7 @@
 .comboAnalise{margin-bottom:10px;margin-top:5px;margin-right:70px;}
 .imgstatus{width:15px;height:auto;}
 
-.observacoes{padding:0px 40px 0px 0px;display: table-cell !important;width:50%  !important;}
+.observacoes{padding:0px 40px 0px 0px;display: table-cell !important;}
 #dlFailApp .observacoes{display:block;}
 #dlFailTest .observacoes{display:block;}
 

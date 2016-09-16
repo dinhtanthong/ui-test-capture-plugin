@@ -32,8 +32,6 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
-
-import br.vbathke.helper.JsonParseSingleQuote;
 import br.vbathke.model.Execution;
 import br.vbathke.model.Job;
 import br.vbathke.model.Result;
@@ -93,7 +91,6 @@ public class UITestCaptureBuilder extends Builder{
 
 	public class Watcher implements Runnable {
 		private AbstractBuild build;
-		private String fileString = "";
 
 		public Watcher(AbstractBuild pbuild) throws NoSuchAlgorithmException {
 			build = pbuild;
@@ -102,46 +99,62 @@ public class UITestCaptureBuilder extends Builder{
 		@Override
 		public void run() {
 			Job job = new Job(build.getProject().getName());
+			String path = "";
 			while (build.isBuilding()) {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {}
-				persistNewTestResults(build, (build.getProject().getLastBuild().getWorkspace().toString()).replace("\\", "/")+job.getXmlPath());
+				try {
+					path = (build.getProject().getLastBuild().getWorkspace().toString()).replace("\\", "/")+job.getXmlPath();
+				} catch (NullPointerException e) {}
+				persistNewTestResults(build, path);
 			}
 		}
 
 		public boolean persistNewTestResults(AbstractBuild build, String path){
 			try{
 				File directory = new File(path);
-				String [] directoryContents = directory.list();
-				for(String fileName: directoryContents) {
-				    File temp = new File(String.valueOf(directory),fileName);
-				    if(fileName.contains(".xml") && !fileName.contains(".parsed.xml")){
-					    File temp2 = new File(String.valueOf(directory),fileName.replace(".xml", ".parsed.xml"));
-				    	temp.renameTo(temp2);
-				    	DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-				    	Document doc = dBuilder.parse(temp2);
-				    	NodeList testCases = doc.getElementsByTagName("testcase");
-				    	for (int i=0; i < testCases.getLength(); i++) {
-				    		String status = "passed";
-				    		Node testCase = testCases.item(i);
-				    		Element eElement = (Element) testCase;
-					    	NodeList error = eElement.getElementsByTagName("error");
-					    	NodeList failure = eElement.getElementsByTagName("failure");
-					    	NodeList skipped = eElement.getElementsByTagName("skipped");
-					    	if(error.getLength()>0)
-					    		status = "error";
-					    	if(failure.getLength()>0)
-					    		status = "failure";
-					    	if(skipped.getLength()>0)
-					    		status = "skipped";
-					    	String methodName = eElement.getAttribute("classname")+"."+eElement.getAttribute("name");
-					    	String className = eElement.getAttribute("classname");
-					    	persistResult(build, className, methodName, status);
-				    	}
-				    }
+				String[] directoryContents = new String[]{};
+				try{
+					directoryContents = directory.list();
+				}catch(Exception e){
+					e.getClass();
 				}
-			}catch(Exception e){}
+				if(directoryContents != null){
+					for(String fileName: directoryContents) {
+					    File temp = new File(String.valueOf(directory),fileName);
+					    if(fileName.contains(".xml") && !fileName.contains(".parsed.xml")){
+						    File temp2 = new File(String.valueOf(directory),fileName.replace(".xml", ".parsed.xml"));
+					    	boolean statRename = temp.renameTo(temp2);
+					    	if(statRename){
+						    	DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+						    	Document doc = dBuilder.parse(temp2);
+						    	NodeList testCases = doc.getElementsByTagName("testcase");
+						    	for (int i=0; i < testCases.getLength(); i++) {
+						    		String status = "passed";
+						    		Node testCase = testCases.item(i);
+						    		Element eElement = (Element) testCase;
+							    	NodeList error = eElement.getElementsByTagName("error");
+							    	NodeList failure = eElement.getElementsByTagName("failure");
+							    	NodeList skipped = eElement.getElementsByTagName("skipped");
+							    	if(error.getLength()>0)
+							    		status = "error";
+							    	if(failure.getLength()>0)
+							    		status = "failure";
+							    	if(skipped.getLength()>0)
+							    		status = "skipped";
+							    	String methodName = eElement.getAttribute("classname")+"."+eElement.getAttribute("name");
+							    	String className = eElement.getAttribute("classname");
+							    	persistResult(build, className, methodName, status);
+						    	}
+					    	}
+					    }
+					}
+				}
+			}catch(RuntimeException e){
+				throw e;
+				}catch(Exception e2){
+			}
 			return true;
 		}
 	}

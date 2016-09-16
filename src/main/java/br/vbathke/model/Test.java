@@ -5,6 +5,7 @@ import java.sql.Statement;
 
 import net.sf.json.JSONArray;
 import br.vbathke.helper.SqliteHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Test {
 
@@ -19,7 +20,8 @@ public class Test {
 	
 	public Test(){		
 	}
-		
+	
+	@SuppressFBWarnings({"SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE","OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE"})
 	public Test(String job, String test){
         Statement stmt = null;
         try{
@@ -38,10 +40,12 @@ public class Test {
 			rs.close();
 			stmt.close();
         }catch(Exception e){
+			stmt = null;
         	e.printStackTrace();
         }
 	}
 	
+	@SuppressFBWarnings({"SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE","OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE"})
 	public void save(){
         Statement stmt = null;
         try {
@@ -61,10 +65,12 @@ public class Test {
 			}
 			stmt.close();
 		} catch ( Exception e ) {
+			stmt = null;
 		  	e.printStackTrace();
 		}		
 	}
 	
+	@SuppressFBWarnings({"SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE","OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE"})
     public String consultarHistorico() throws Exception{
     	SqliteHelper conn = new SqliteHelper();
     	JSONArray rs = 

@@ -18,6 +18,7 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 	$scope.streamSize=0;
 	$scope.historyPosition=0;
 	$scope.lastToken="";
+	$scope.execDate="";
 	$scope.stack={};
 	$scope.executionHistoryLast10={};
 	$scope.executionHistory={};
@@ -158,12 +159,22 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 				($scope.stack[i].classificacao=='test_fail'?$scope.resume.flaky++:"");
 				($scope.stack[i].classificacao=='app_fail'?$scope.resume.knowissue++:"");
 				$scope.execDescription = $scope.stack[i].execDescription;
+				$scope.execDate = $scope.paseDate($scope.stack[i].executionDate);
 			}
 
 			$scope.getAllResults();
 		});	
 	}
 
+	$scope.paseDate=function(date){
+		var year = date.substring(0, 4); 
+		var month = date.substring(4, 6); 
+		var day = date.substring(6, 8); 
+		var hour = date.substring(8, 10); 
+		var minute = date.substring(10, 12); 
+		return day+'/'+month+'/'+year+' '+hour+':'+minute;
+	}
+	
 	$scope.getAllResults=function(){
 		Review.allResults($scope.job, $scope.urlPrefixPlugin).success(function(data) {
 			$scope.executionHistory = data;
@@ -219,6 +230,7 @@ app.controller('ReviewCtrl', function($scope, $rootScope, $location, $http, $rou
 		$scope.resume= {passed:0,failed:0,working:0,operational:0,flaky:0,knowissue:0,total:0};
 		$scope.showLast10ExecStatus=false;
 		$scope.execDescription = "";
+		//$scope.execDate = "";
 	}
 	
 	$scope.runJob=function(){

@@ -12,6 +12,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import br.vbathke.helper.SqliteHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Execution {
 
@@ -23,7 +24,8 @@ public class Execution {
 	
 	public Execution(){		
 	}
-		
+
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
 	public Execution(String idExec, int idJob){
 		try {
 			setId(Integer.parseInt(""+idExec));
@@ -44,6 +46,7 @@ public class Execution {
 		} catch (Exception e) {}
 	}
 	
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
 	public void save(){
         Statement stmt = null;
 		try {
@@ -70,6 +73,7 @@ public class Execution {
 		}
 	}
 	
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
     public String consultarHistoricoExec(String stream, int streamSize) throws Exception{
     	SqliteHelper conn = new SqliteHelper();
     	JSONArray rs = conn.query( "select tr.id_exec,"
@@ -77,6 +81,7 @@ public class Execution {
 				+ "te.description as execDescription, "
 				+ "tr.status as status, "
 				+ "tr.description as descricao, "
+				+ "te.date as executionDate, "
 				+ "tt.status_description as statusDescription, "
 				+ "tt.behavior as behavior, "
 				+ "tr.stacktrace as stacktrace, "
@@ -96,14 +101,16 @@ public class Execution {
 			String historico = (new Test(job.getName(), rs.getJSONObject(i).getString("metodo"))).consultarHistorico();
 			rs.getJSONObject(i).accumulate("historico", historico);
 			arr.add(rs.getString(i));
-		}
-		String retorno = "";
+		}	
+		
+		StringBuffer buffer = new StringBuffer();
 		for(String item: arr){
-			retorno+=item;
+			buffer.append(item);
 			if(!item.equals(arr.get(arr.size() -1))){
-				retorno+=",";
+				buffer.append(",");
 			}
 		}
+		String retorno = buffer.toString();
 		if(!retorno.equals("")){
 			retorno = retorno.replace(":null,", ":\"\",");
 			retorno = "{\"stack\":["+retorno+"]}";
@@ -113,6 +120,7 @@ public class Execution {
 		}
     }
     
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
     public String consultarQuadro(){
     	String retorno = "";
     	SqliteHelper conn = new SqliteHelper();
@@ -170,6 +178,7 @@ public class Execution {
 		return retorno;
     }
     
+	@SuppressFBWarnings("SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE")
     public int consultarHistoricoExecSize(){
     	SqliteHelper conn = new SqliteHelper();
     	int buildSize = 0;
